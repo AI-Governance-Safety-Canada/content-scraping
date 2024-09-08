@@ -1,0 +1,12 @@
+# OS-specific metadata files
+.DS_Store
+Desktop.ini
+
+# Generated Python files and directories
+*.py[cod]
+__pycache__/
+
+# Data output files
+*.json
+*.jsonl
+*.csv
