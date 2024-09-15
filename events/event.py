@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field, InitVar
+from dataclasses import asdict, dataclass, field, InitVar
 from datetime import date, datetime, time
 from typing import Optional
 
@@ -42,3 +42,13 @@ class Event:
         if end:
             self.end_date = end.date
             self.end_time = end.time
+
+    def merge(self, other: "Event") -> "Event":
+        """Use another event to fill in missing fields from self
+
+        Non-None fields from self are preserved. None fields are modified in-place.
+        """
+        for field_name, value in asdict(other).items():
+            if getattr(self, field_name) is None:
+                setattr(self, field_name, value)
+        return self
