@@ -21,13 +21,15 @@ def parse_date_and_time(
     try:
         date = datetime.date.fromisoformat(date_string)
     except (TypeError, ValueError):
-        logger.debug("Failed to parse date %r", date_string)
+        if date_string:
+            logger.debug("Failed to parse date %r", date_string)
         return None
 
     time: Optional[datetime.time] = None
     try:
         time = datetime.time.fromisoformat(time_string)
     except (TypeError, ValueError):
-        logger.debug("Failed to parse time %r", time)
+        if time_string:
+            logger.debug("Failed to parse time %r", time_string)
 
     return DateAndTime(date=date, time=time)
