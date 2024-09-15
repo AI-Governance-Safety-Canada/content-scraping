@@ -9,7 +9,7 @@ def submit(
     method_name: str,
     prompt: str,
     api_key: str,
-) -> Optional[List[Dict[Any, Any]]]:
+) -> Optional[Dict[str, List[Dict[Any, Any]]]]:
     """Submit a request to InstantAPI and return its response
 
     The API documentation lives here:
