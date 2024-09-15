@@ -11,9 +11,10 @@ def parse_date_and_time(
 ) -> Optional[DateAndTime]:
     """Parse and combine the given date and time
 
-    Both arguments should be in ISO-8601 format. The time should include the UTC offset.
+    Both arguments should be in ISO-8601 format. time_string should include the UTC
+    offset. If it does not, the resulting time is naive.
 
-    If the time cannot be parsed, use a time of 12:00 UTC.
+    If the time cannot be parsed, set it to None.
     If the date cannot be parsed, return None.
     """
     logger = logging.getLogger(__name__)
