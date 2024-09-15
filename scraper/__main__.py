@@ -3,36 +3,11 @@ import argparse
 import datetime
 import logging
 from pathlib import Path
-from typing import Iterable
 
-from scraper.events.event import Event
+from scraper.events.pipeline import fetch_events
 from scraper.events.prompt import EVENT_METHOD, EVENT_PROMPT
-from scraper.events.sources import EVENT_SOURCES
-from scraper.events.parser import parse_full_response
 from scraper.common.api.instant_api import InstantAPI
 from scraper.common.writers.format_selector import SUPPORTED_FORMATS, write_items
-
-
-def fetch_events(api_key: str) -> Iterable[Event]:
-    logger = logging.getLogger(__name__)
-    api = InstantAPI(
-        api_key=api_key,
-        prompt=EVENT_PROMPT,
-        method_name=EVENT_METHOD,
-    )
-    for source in EVENT_SOURCES:
-        logger.info("Scraping events from %s", source)
-        response = api.scrape(source)
-        if not response:
-            continue
-        for event in parse_full_response(
-            response=response,
-            scrape_source=source,
-            scrape_datetime=datetime.datetime.now(datetime.timezone.utc),
-        ):
-            logger.debug("%r", event)
-            if event:
-                yield event
 
 
 def main() -> None:
@@ -56,8 +31,14 @@ def main() -> None:
 
     logging.basicConfig(level=logging.DEBUG)
 
+    api = InstantAPI(
+        api_key=args.api_key,
+        prompt=EVENT_PROMPT,
+        method_name=EVENT_METHOD,
+    )
+    events = fetch_events(api)
     write_items(
-        items=fetch_events(args.api_key),
+        items=events,
         output_path=args.output_path,
     )
 
