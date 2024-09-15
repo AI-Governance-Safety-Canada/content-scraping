@@ -3,6 +3,8 @@ from typing import Any, Dict, List, Optional
 
 import requests
 
+from scraper.common.text_processors.html import convert_html_entities
+
 
 def submit(
     url_to_scrape: str,
@@ -38,7 +40,8 @@ def submit(
         )
         return None
     try:
-        return response.json()
+        response_json = response.json()
     except requests.exceptions.JSONDecodeError:
         logger.exception("Failed to parse response: %r", response.text)
-    return None
+        return None
+    return convert_html_entities(response_json)
