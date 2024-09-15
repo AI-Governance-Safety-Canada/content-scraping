@@ -22,8 +22,6 @@ class Event:
     description: Optional[str]
     url: Optional[str]
     virtual: Optional[bool]
-    location_country: Optional[str]
-    location_region: Optional[str]
     location_city: Optional[str]
     scrape_source: str
     scrape_datetime: datetime
