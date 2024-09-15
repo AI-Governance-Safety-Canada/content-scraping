@@ -50,9 +50,6 @@ def parse_response_item(
     description = fetch_field_with_type(response, "event_description", str)
     url = fetch_field_with_type(response, "event_url", str)
     virtual = is_virtual(fetch_field_with_type(response, "event_attendence", str))
-
-    location_country = fetch_field_with_type(response, "event_country", str)
-    location_region = fetch_field_with_type(response, "event_region", str)
     location_city = fetch_field_with_type(response, "event_city", str)
 
     return Event(
@@ -62,8 +59,6 @@ def parse_response_item(
         description=description,
         url=url,
         virtual=virtual,
-        location_country=location_country,
-        location_region=location_region,
         location_city=location_city,
         scrape_source=scrape_source,
         scrape_datetime=scrape_datetime,
