@@ -1,5 +1,6 @@
 import datetime
 from typing import Any, Dict, Iterable, List, Optional
+from urllib.parse import urljoin
 
 from scraper.common.parsers.date_and_time import parse_date_and_time
 from scraper.common.parsers.field import fetch_field_with_type
@@ -48,9 +49,15 @@ def parse_response_item(
     end = parse_date_and_time(end_date, end_time)
 
     description = fetch_field_with_type(response, "event_description", str)
-    url = fetch_field_with_type(response, "event_url", str)
     virtual = is_virtual(fetch_field_with_type(response, "event_attendence", str))
     location_city = fetch_field_with_type(response, "event_city", str)
+
+    url = fetch_field_with_type(response, "event_url", str)
+    if url:
+        # Some URLs only contain the path, e.g. "/path/to/event.html"
+        # Here we combine them with scrape_source to produce a full URL,
+        # e.g. "https://mysite.com/path/to/event.html"
+        url = urljoin(scrape_source, url)
 
     return Event(
         title=title,
