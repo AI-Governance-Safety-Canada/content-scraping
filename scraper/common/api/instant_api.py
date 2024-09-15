@@ -1,9 +1,19 @@
+import json
 import logging
 from typing import Any, Dict, List, Optional
 
 import requests
 
 from scraper.common.text_processors.html import convert_html_entities
+
+
+def stringify_prompt(prompt: Dict[str, Any]) -> str:
+    """Convert a prompt dictionary into a string for InstantAPI"""
+    # InstantAPI expects the prompt to be a representation of a JSON object as a string
+    # with the form
+    #   "{\"field\": \"<description>\", ...}"
+    # Calling json.dumps() twice escapes the inner quotation marks the way we want.
+    return json.dumps(json.dumps(prompt, separators=(",", ":")))
 
 
 def submit(

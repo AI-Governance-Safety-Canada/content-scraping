@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 import datetime
-import json
 import logging
 from pathlib import Path
 from typing import Iterable
@@ -10,17 +9,13 @@ from scraper.events.event import Event
 from scraper.events.prompt import EVENT_METHOD, EVENT_PROMPT
 from scraper.events.sources import EVENT_SOURCES
 from scraper.events.parser import parse_full_response
-from scraper.common.api.instant_api import submit
+from scraper.common.api.instant_api import stringify_prompt, submit
 from scraper.common.writers.format_selector import SUPPORTED_FORMATS, write_items
 
 
 def fetch_events(api_key: str) -> Iterable[Event]:
-    # InstantAPI expects the prompt to be a representation of a JSON object as a string
-    # with the form
-    #   "{\"field\": \"<description>\", ...}"
-    # Calling json.dumps() twice escapes the inner quotation marks the way we want.
     logger = logging.getLogger(__name__)
-    prompt = json.dumps(json.dumps(EVENT_PROMPT, separators=(",", ":")))
+    prompt = stringify_prompt(EVENT_PROMPT)
     for source in EVENT_SOURCES:
         logger.info("Scraping events from %s", source)
         response = submit(
