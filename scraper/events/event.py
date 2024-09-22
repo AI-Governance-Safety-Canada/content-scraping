@@ -1,8 +1,18 @@
 from dataclasses import asdict, dataclass, field, InitVar
 from datetime import date, datetime, time
+from enum import Enum
 from typing import Optional
 
 from scraper.common.types.date_and_time import DateAndTime
+
+
+class Approved(Enum):
+    PENDING = "pending"
+    NO = "no"
+    YES = "yes"
+
+    def __str__(self) -> str:
+        return self.value
 
 
 @dataclass
@@ -23,6 +33,7 @@ class Event:
     url: Optional[str]
     virtual: Optional[bool]
     location_city: Optional[str]
+    approved: Approved = field(init=False, default=Approved.PENDING)
     scrape_source: str
     scrape_datetime: datetime
 
