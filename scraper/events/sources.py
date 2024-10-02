@@ -1,5 +1,4 @@
 EVENT_SOURCES = (
-    "https://aligntheworld.com/events/",
     "https://caida.ubc.ca/events",
     "https://canadianigf.ca/event-details/",
     "https://canadianlabour.ca/events/",
