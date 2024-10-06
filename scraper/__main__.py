@@ -52,6 +52,19 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    logging.basicConfig(
+        handlers=(
+            logging.StreamHandler(),
+            logging.FileHandler("log.txt", mode="a"),
+        ),
+        style="{",
+        format="{asctime:s} {levelname:7s} {name:s}:{lineno:d} {message:s}",
+        datefmt="%Y-%m-%dT%H:%M:%S%z",
+        level=logging.DEBUG,
+    )
+    logger = logging.getLogger(__name__)
+
+
     if not dotenv.load_dotenv():
         raise RuntimeError(
             "No .env file found. Please copy and modify .env.example following the "
@@ -63,8 +76,6 @@ def main() -> None:
             "API key not found in .env file. "
             "Please see .env.example for the expected format."
         )
-
-    logging.basicConfig(level=logging.DEBUG)
 
     api = InstantAPI(
         api_key=api_key,
