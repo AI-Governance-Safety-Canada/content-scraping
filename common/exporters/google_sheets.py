@@ -102,6 +102,14 @@ def main() -> None:
         type=Path,
         help="CSV file to export to Google Sheets",
     )
+    parser.add_argument(
+        "--no-dot-env",
+        action="store_true",
+        help="""
+        Do not try to load configuration from .env file. Instead assume environment
+        variables have already been set. Useful for automation.
+        """,
+    )
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -116,11 +124,12 @@ def main() -> None:
     )
     logger = logging.getLogger(__name__)
 
-    if not dotenv.load_dotenv():
-        raise RuntimeError(
-            "No .env file found. Please copy and modify .env.example following the "
-            "instructions in README.md."
-        )
+    if not args.no_dot_env:
+        if not dotenv.load_dotenv():
+            raise RuntimeError(
+                "No .env file found. Please copy and modify .env.example following the "
+                "instructions in README.md."
+            )
 
     key_str = load_environment_variable("GOOGLE_SERVICE_ACCOUNT_KEY")
     try:
