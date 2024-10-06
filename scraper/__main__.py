@@ -50,6 +50,14 @@ def main() -> None:
             do not filter by date. Format date according to ISO-8601: 2001-01-31.
         """,
     )
+    parser.add_argument(
+        "--no-dot-env",
+        action="store_true",
+        help="""
+        Do not try to load configuration from .env file. Instead assume environment
+        variables have already been set. Useful for automation.
+        """,
+    )
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -64,12 +72,12 @@ def main() -> None:
     )
     logger = logging.getLogger(__name__)
 
-
-    if not dotenv.load_dotenv():
-        raise RuntimeError(
-            "No .env file found. Please copy and modify .env.example following the "
-            "instructions in README.md."
-        )
+    if not args.no_dot_env:
+        if not dotenv.load_dotenv():
+            raise RuntimeError(
+                "No .env file found. Please copy and modify .env.example following the "
+                "instructions in README.md."
+            )
     api_key = os.getenv("INSTANT_API_KEY")
     if not api_key:
         raise ValueError(
