@@ -2,7 +2,10 @@
 import argparse
 import datetime
 import logging
+import os
 from pathlib import Path
+
+import dotenv
 
 from scraper.events.pipeline import fetch_events
 from scraper.events.prompt import EVENT_METHOD, EVENT_PROMPT
@@ -17,12 +20,12 @@ EPOCH_START = datetime.date.fromtimestamp(0)
 
 def main() -> None:
     output_formats = tuple(SUPPORTED_FORMATS.keys())
-    parser = argparse.ArgumentParser(description="")
-    parser.add_argument(
-        "api_key",
-        help="""
-            Key for InstantAPI. Get one from https://instantapi.ai/docs/get-started/
+    parser = argparse.ArgumentParser(
+        description="""
+            Scrape information from one or more sources and write it to a specified
+            output file.
         """,
+        epilog="See the README for detailed instructions.",
     )
     parser.add_argument(
         "output_path",
@@ -49,10 +52,22 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    if not dotenv.load_dotenv():
+        raise RuntimeError(
+            "No .env file found. Please copy and modify .env.example following the "
+            "instructions in README.md."
+        )
+    api_key = os.getenv("INSTANT_API_KEY")
+    if not api_key:
+        raise ValueError(
+            "API key not found in .env file. "
+            "Please see .env.example for the expected format."
+        )
+
     logging.basicConfig(level=logging.DEBUG)
 
     api = InstantAPI(
-        api_key=args.api_key,
+        api_key=api_key,
         prompt=EVENT_PROMPT,
         method_name=EVENT_METHOD,
     )
