@@ -1,0 +1,55 @@
+name: Scrape and Publish
+on:
+  workflow_dispatch:
+  schedule:
+    # Run at 00:47 UTC every day
+    - cron: '47 0 * * *'
+permissions:
+  contents: read
+
+jobs:
+  scrape:
+    name: Scrape and Publish Events
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+
+      - name: Clear existing output file
+        run: rm -f output.csv
+
+      - name: Generate timestamp
+        id: generate-timestamp
+        run: echo "TIMESTAMP=$(date +%Y-%m-%dT%H-%M-%S)" >> "$GITHUB_OUTPUT"
+
+      - name: Scrape events
+        env:
+          INSTANT_API_KEY: ${{ secrets.INSTANT_API_KEY }}
+        run: python -m scraper --no-dot-env output.csv
+
+      - name: Archive scrape log
+        uses: actions/upload-artifact@v4
+        with:
+          name: scrape-log_${{ steps.generate-timestamp.outputs.TIMESTAMP}}.txt
+          path: log.txt
+
+      - name: Archive scrape output
+        uses: actions/upload-artifact@v4
+        with:
+          name: scrape-output_${{ steps.generate-timestamp.outputs.TIMESTAMP }}.csv
+          path: output.csv
+
+      - name: Publish events
+        # Only run if all previous steps succeeded
+        if: ${{ success() }}
+        env:
+          GOOGLE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+          GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+          GOOGLE_SHEET_NAME: ${{ secrets.GOOGLE_SHEET_NAME }}
+        run: python common/exporters/google_sheets.py --no-dot-env output.csv
