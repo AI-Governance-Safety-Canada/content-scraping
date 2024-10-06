@@ -104,7 +104,16 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(
+        handlers=(
+            logging.StreamHandler(),
+            logging.FileHandler("log.txt", mode="a"),
+        ),
+        style="{",
+        format="{asctime:s} {levelname:7s} {name:s}:{lineno:d} {message:s}",
+        datefmt="%Y-%m-%dT%H:%M:%S%z",
+        level=logging.DEBUG,
+    )
     logger = logging.getLogger(__name__)
 
     if not dotenv.load_dotenv():
