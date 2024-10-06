@@ -6,6 +6,9 @@ Desktop.ini
 *.py[cod]
 __pycache__/
 
+# File holding sensitive environment variables
+.env
+
 # Data output files
 *.json
 *.jsonl
