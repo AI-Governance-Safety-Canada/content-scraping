@@ -9,6 +9,9 @@ __pycache__/
 # File holding sensitive environment variables
 .env
 
+# Log output file
+log.txt
+
 # Data output files
 *.json
 *.jsonl
