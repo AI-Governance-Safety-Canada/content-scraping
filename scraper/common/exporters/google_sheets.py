@@ -53,6 +53,23 @@ def fetch_rows(
     return result.get("values", [])
 
 
+def compare_headers(
+    new_rows: Sequence[List[Any]],
+    existing_rows: Sequence[List[Any]],
+) -> None:
+    logger = logging.getLogger(__name__)
+    if not new_rows or not existing_rows:
+        logger.debug("No headers to compare")
+        return
+    if new_rows[0] == existing_rows[0]:
+        logger.debug("Headers match")
+        return
+    logger.error("Headers do not match")
+    logger.info("Existing headers: %s", existing_rows[0])
+    logger.info("New headers:      %s", new_rows[0])
+    raise RuntimeError("Headers in new and existing tables do not match")
+
+
 def deduplicate(
     new_rows: Iterable[List[Any]],
     existing_rows: Iterable[List[Any]],
@@ -149,7 +166,9 @@ def main() -> None:
         sheet_name=sheet_name,
     )
     logger.info("Fetched %d rows", len(existing_rows))
-    input_rows = load_csv(args.file_to_export)
+    input_rows = list(load_csv(args.file_to_export))
+    compare_headers(input_rows, existing_rows)
+
     deduplicated_rows = deduplicate(
         input_rows,
         existing_rows,
