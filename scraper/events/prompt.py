@@ -11,7 +11,9 @@ EVENT_PROMPT = {
             "event_description": "<A short description of the event in one to three sentences if one is present. Otherwise, the empty string.>",
             "event_url": "<The full URL for the event. If no URL is provided, this field is the empty string.>",
             "event_attendence": "<How participants will join the event: either 'in-person', 'virtual' or 'hybrid'>",
-            "event_city": "<The city the event is located in, if provided, excluding the state, province, country, etc. For for in-person or hybrid events without a listed location, this field is the empty string. For virtual events, this is set to 'online'.>",
+            "event_country": "<The country the event is located in, if provided. For for in-person or hybrid events without a listed location, this field is the empty string. For virtual events, this is set to 'online'.>",
+            "event_region": "<The region (state, province, etc.) the event is located in, if provided. For for in-person or hybrid events without a listed location, this field is the empty string. For virtual events, this is set to 'online'.>",
+            "event_city": "<The city the event is located in, if provided. For for in-person or hybrid events without a listed location, this field is the empty string. For virtual events, this is set to 'online'.>",
         },
     ],
 }

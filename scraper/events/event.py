@@ -32,6 +32,8 @@ class Event:
     description: Optional[str]
     url: Optional[str]
     virtual: Optional[bool]
+    location_country: Optional[str]
+    location_region: Optional[str]
     location_city: Optional[str]
     approved: Approved = field(init=False, default=Approved.PENDING)
     scrape_source: str
