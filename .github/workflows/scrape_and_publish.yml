@@ -33,17 +33,13 @@ jobs:
           INSTANT_API_KEY: ${{ secrets.INSTANT_API_KEY }}
         run: python -m scraper --no-dot-env output.csv
 
-      - name: Archive scrape log
+      - name: Archive scrape output and log
         uses: actions/upload-artifact@v4
         with:
-          name: scrape-log_${{ steps.generate-timestamp.outputs.TIMESTAMP}}.txt
-          path: log.txt
-
-      - name: Archive scrape output
-        uses: actions/upload-artifact@v4
-        with:
-          name: scrape-output_${{ steps.generate-timestamp.outputs.TIMESTAMP }}.csv
-          path: output.csv
+          name: scrape-output_${{ steps.generate-timestamp.outputs.TIMESTAMP}}
+          path: |
+            output.csv
+            log.txt
 
       - name: Publish events
         # Only run if all previous steps succeeded
