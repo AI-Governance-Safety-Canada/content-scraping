@@ -35,7 +35,13 @@ class Event:
     location_country: Optional[str]
     location_region: Optional[str]
     location_city: Optional[str]
+
+    # These fields are not scraped but are used later in the pipeline
+    accessible_to_canadians: Optional[float] = field(init=False, default=None)
+    open_to_public: Optional[float] = field(init=False, default=None)
     approved: Approved = field(init=False, default=Approved.PENDING)
+
+    # Metadata about where and when this event was scraped
     scrape_source: str
     scrape_datetime: datetime
 
