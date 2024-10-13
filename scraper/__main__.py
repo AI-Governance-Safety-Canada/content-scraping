@@ -70,7 +70,6 @@ def main() -> None:
         datefmt="%Y-%m-%dT%H:%M:%S%z",
         level=logging.DEBUG,
     )
-    logger = logging.getLogger(__name__)
 
     if not args.no_dot_env:
         if not dotenv.load_dotenv():
