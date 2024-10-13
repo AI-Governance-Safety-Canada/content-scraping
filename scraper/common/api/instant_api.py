@@ -61,6 +61,12 @@ class InstantAPI(API):
                 response.reason,
                 response.text,
             )
+            if response.text.startswith("Your subscription is currently inactive"):
+                # If there's a problem with the API key or similar, there's no point in
+                # trying other pages.
+                raise RuntimeError("Request failed with response: %s", response.text)
+            # Responses can fail for other reasons, for instance the page to scrape
+            # doesn't exist. In that case, we want to continue to the next page.
             return None
         try:
             response_json = response.json()
