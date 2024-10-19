@@ -1,9 +1,6 @@
 name: Scrape and Publish
 on:
   workflow_dispatch:
-  schedule:
-    # Run at 00:47 UTC every Sunday
-    - cron: '47 0 * * SUN'
 permissions:
   contents: read
 
