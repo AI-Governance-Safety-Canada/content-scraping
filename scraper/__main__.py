@@ -9,7 +9,7 @@ import dotenv
 
 from scraper.events.pipeline import fetch_events
 from scraper.events.prompt import EVENT_METHOD, EVENT_PROMPT
-from scraper.common.api.instant_api import InstantAPI
+from scraper.common.api.instant_api import InstantApi
 from scraper.common.filters.date_and_time import exclude_old_items
 from scraper.common.writers.format_selector import SUPPORTED_FORMATS, write_items
 
@@ -84,7 +84,7 @@ def main() -> None:
             "Please see .env.example for the expected format."
         )
 
-    api = InstantAPI(
+    api = InstantApi(
         api_key=api_key,
         prompt=EVENT_PROMPT,
         method_name=EVENT_METHOD,

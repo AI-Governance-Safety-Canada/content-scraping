@@ -5,20 +5,20 @@ from typing import Any, Dict
 import requests
 
 from scraper.common.text_processors.html import convert_html_entities
-from .interface import API, ApiResponse
+from .interface import Api, ApiResponse
 
 
 def stringify_prompt(prompt: Dict[str, Any]) -> str:
-    """Convert a prompt dictionary into a string for InstantAPI"""
-    # InstantAPI expects the prompt to be a representation of a JSON object as a string
+    """Convert a prompt dictionary into a string for InstantApi"""
+    # InstantApi expects the prompt to be a representation of a JSON object as a string
     # with the form
     #   "{\"field\": \"<description>\", ...}"
     # Calling json.dumps() twice escapes the inner quotation marks the way we want.
     return json.dumps(json.dumps(prompt, separators=(",", ":")))
 
 
-class InstantAPI(API):
-    """Class for scraping webpages using InstantAPI
+class InstantApi(Api):
+    """Class for scraping webpages using InstantApi
 
     The API documentation lives here:
         https://instantapi.ai/docs/retrieve/api-endpoint/

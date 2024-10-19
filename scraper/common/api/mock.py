@@ -1,7 +1,7 @@
-from .interface import API, ApiResponse
+from .interface import Api, ApiResponse
 
 
-class MockAPI(API):
+class MockApi(Api):
     """Mock API for testing the pipeline with dummy data"""
 
     def scrape(self, _: str) -> ApiResponse:
