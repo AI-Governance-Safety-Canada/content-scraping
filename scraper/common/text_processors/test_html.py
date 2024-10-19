@@ -1,7 +1,10 @@
 import unittest
 from collections import OrderedDict
+from typing import Optional
 
-from .html import convert_html_entities
+from bs4 import BeautifulSoup
+
+from .html import convert_html_entities, clean_content
 
 
 class TestConvertHtmlEntities(unittest.TestCase):
@@ -88,6 +91,110 @@ class TestConvertHtmlEntities(unittest.TestCase):
             "bool": True,
         }
         self.assertEqual(convert_html_entities(escaped), expected)
+
+
+class TestCleanContent(unittest.TestCase):
+    def compare_html(self, expected: str, result: Optional[str]) -> None:
+        self.assertIsNotNone(result)
+        expected_soup = BeautifulSoup(expected, "html.parser")
+        result_soup = BeautifulSoup(result, "html.parser")
+        self.assertEqual(expected_soup.prettify(), result_soup.prettify())
+
+    def test_invalid_html(self) -> None:
+        self.assertIsNone(clean_content(""))
+        self.assertIsNone(clean_content("abc"))
+
+        html = """
+        <html>
+            <head>
+                <title>Test</title>
+            </head>
+            <body>
+                <h1>Title</h1>
+                <script>alert('Hello');</script>
+            </body>
+        """
+        expected = "<body>\n <h1>Title</h1>\n</body>"
+        result = clean_content(html)
+        self.compare_html(expected, result)
+
+    def test_no_body(self) -> None:
+        html = """
+        <html>
+            <head>
+                <title>Test</title>
+            </head>
+        </html>
+        """
+        self.assertIsNone(clean_content(html))
+
+    def test_no_scripts(self) -> None:
+        html = """
+        <html>
+            <head>
+                <title>Test</title>
+            </head>
+            <body>
+                <h1>Title</h1>
+                <p>Lorem ipsum</p>
+            </body>
+        </html>
+        """
+        expected = """
+        <body>
+            <h1>Title</h1>
+            <p>Lorem ipsum</p>
+        </body>
+        """
+        result = clean_content(html)
+        self.compare_html(expected, result)
+
+    def test_single_script(self) -> None:
+        html = """
+        <html>
+            <head>
+                <title>Test</title>
+            </head>
+            <body>
+                <h1>Title</h1>
+                <script>alert('Hello');</script>
+                <p>Lorem ipsum</p>
+            </body>
+        </html>
+        """
+        expected = """
+        <body>
+            <h1>Title</h1>
+            <p>Lorem ipsum</p>
+        </body>
+        """
+        result = clean_content(html)
+        self.compare_html(expected, result)
+
+    def test_multiple_scripts(self) -> None:
+        html = """
+        <html>
+            <head>
+                <title>Test</title>
+            </head>
+            <body>
+                <h1>Title</h1>
+                <script>alert('Hello');</script>
+                <p>Lorem ipsum</p>
+                <script>console.log('World');</script>
+                <p>dolor sit amet</p>
+            </body>
+        </html>
+        """
+        expected = """
+        <body>
+            <h1>Title</h1>
+            <p>Lorem ipsum</p>
+            <p>dolor sit amet</p>
+        </body>
+        """
+        result = clean_content(html)
+        self.compare_html(expected, result)
 
 
 if __name__ == "__main__":
