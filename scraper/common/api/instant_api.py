@@ -6,6 +6,7 @@ import requests
 
 from scraper.common.text_processors.html import convert_html_entities
 from .interface import Api, ApiResponse
+from .http import post
 
 
 def stringify_prompt(prompt: Dict[str, Any]) -> str:
@@ -37,6 +38,8 @@ class InstantApi(Api):
         self.method_name = method_name
 
     def scrape(self, url: str) -> ApiResponse:
+        # We only need to submit a single request to the API. It will fetch the page for
+        # us and parse it.
         logger = logging.getLogger(__name__)
         payload = {
             "webpage_url": url,
@@ -45,28 +48,12 @@ class InstantApi(Api):
             "api_key": self.api_key,
         }
         headers = {"Content-Type": "application/json"}
-        try:
-            response = requests.post(
-                self.ENDPOINT,
-                json=payload,
-                headers=headers,
-            )
-        except requests.RequestException:
-            logger.exception("Failed to get response from %r", self.ENDPOINT)
-            return None
-        if not response.ok:
-            logger.error(
-                "Request returned response status %d: %s - %s",
-                response.status_code,
-                response.reason,
-                response.text,
-            )
-            if response.text.startswith("Your subscription is currently inactive"):
-                # If there's a problem with the API key or similar, there's no point in
-                # trying other pages.
-                raise RuntimeError("Request failed with response: %s", response.text)
-            # Responses can fail for other reasons, for instance the page to scrape
-            # doesn't exist. In that case, we want to continue to the next page.
+        response = post(
+            self.ENDPOINT,
+            json=payload,
+            headers=headers,
+        )
+        if not response:
             return None
         try:
             response_json = response.json()
