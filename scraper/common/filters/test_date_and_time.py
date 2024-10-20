@@ -1,13 +1,13 @@
 import unittest
-from dataclasses import dataclass
 from datetime import date, timedelta
 from typing import List
+
+from pydantic import BaseModel
 
 from .date_and_time import exclude_old_items
 
 
-@dataclass
-class Item:
+class Item(BaseModel):
     when: date
 
 
@@ -15,10 +15,10 @@ class TestExcludeOldItems(unittest.TestCase):
     def setUp(self) -> None:
         self.now = date.today()
         self.items = [
-            Item(self.now - timedelta(days=2)),
-            Item(self.now - timedelta(days=1)),
-            Item(self.now),
-            Item(self.now + timedelta(days=1)),
+            Item(when=self.now - timedelta(days=2)),
+            Item(when=self.now - timedelta(days=1)),
+            Item(when=self.now),
+            Item(when=self.now + timedelta(days=1)),
         ]
 
     def test_exclude_old_items_with_attribute(self) -> None:
@@ -43,12 +43,12 @@ class TestExcludeOldItems(unittest.TestCase):
         self.assertEqual(result, [])
 
     def test_exclude_old_items_all_items_old(self) -> None:
-        old_items = [Item(self.now - timedelta(days=i)) for i in range(1, 5)]
+        old_items = [Item(when=self.now - timedelta(days=i)) for i in range(1, 5)]
         result = list(exclude_old_items(old_items, self.now, attribute="when"))
         self.assertEqual(len(result), 0)
 
     def test_exclude_old_items_all_items_new(self) -> None:
-        new_items = [Item(self.now + timedelta(days=i)) for i in range(1, 5)]
+        new_items = [Item(when=self.now + timedelta(days=i)) for i in range(1, 5)]
         result = list(exclude_old_items(new_items, self.now, attribute="when"))
         self.assertEqual(len(result), 4)
 

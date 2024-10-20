@@ -1,7 +1,8 @@
-from dataclasses import asdict, dataclass, field, InitVar
 from datetime import date, datetime, time
 from enum import Enum
 from typing import Optional
+
+from pydantic import BaseModel, computed_field, Field
 
 from scraper.common.types.date_and_time import DateAndTime
 
@@ -15,19 +16,14 @@ class Approved(Enum):
         return self.value
 
 
-@dataclass
-class Event:
+class Event(BaseModel):
     title: Optional[str]
 
     # start and end must be supplied as DateAndTime to avoid specifying a time without
-    # a date. But internally they're represented as start_date, start_time, end_date and
+    # a date. But internally they're serialized as start_date, start_time, end_date and
     # end_time to match the database format.
-    start: InitVar[Optional[DateAndTime]]
-    start_date: Optional[date] = field(init=False)
-    start_time: Optional[time] = field(init=False)
-    end: InitVar[Optional[DateAndTime]]
-    end_date: Optional[date] = field(init=False)
-    end_time: Optional[time] = field(init=False)
+    start: Optional[DateAndTime] = Field(exclude=True)
+    end: Optional[DateAndTime] = Field(exclude=True)
 
     description: Optional[str]
     url: Optional[str]
@@ -37,37 +33,48 @@ class Event:
     location_city: Optional[str]
 
     # These fields are not scraped but are used later in the pipeline
-    accessible_to_canadians: Optional[float] = field(init=False, default=None)
-    open_to_public: Optional[float] = field(init=False, default=None)
-    approved: Approved = field(init=False, default=Approved.PENDING)
+    accessible_to_canadians: Optional[float] = Field(init=False, default=None)
+    open_to_public: Optional[float] = Field(init=False, default=None)
+    approved: Approved = Field(init=False, default=Approved.PENDING)
 
     # Metadata about where and when this event was scraped
     scrape_source: str
     scrape_datetime: datetime
 
-    def __post_init__(
-        self,
-        start: Optional[DateAndTime],
-        end: Optional[DateAndTime],
-    ) -> None:
-        self.start_date = None
-        self.start_time = None
-        if start:
-            self.start_date = start.date
-            self.start_time = start.time
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def start_date(self) -> Optional[date]:
+        if self.start:
+            return self.start.date
+        return None
 
-        self.end_date = None
-        self.end_time = None
-        if end:
-            self.end_date = end.date
-            self.end_time = end.time
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def start_time(self) -> Optional[time]:
+        if self.start:
+            return self.start.time
+        return None
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def end_date(self) -> Optional[date]:
+        if self.end:
+            return self.end.date
+        return None
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def end_time(self) -> Optional[time]:
+        if self.end:
+            return self.end.time
+        return None
 
     def merge(self, other: "Event") -> "Event":
         """Use another event to fill in missing fields from self
 
         Non-None fields from self are preserved. None fields are modified in-place.
         """
-        for field_name, value in asdict(other).items():
+        for field_name, value in other:
             if getattr(self, field_name) is None:
                 setattr(self, field_name, value)
         return self

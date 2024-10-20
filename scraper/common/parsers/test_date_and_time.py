@@ -9,14 +9,14 @@ class TestParseDateAndTime(unittest.TestCase):
     def test_valid_date_and_time(self) -> None:
         result = parse_date_and_time("2000-01-23", "12:34:56+00:00")
         expected = DateAndTime(
-            datetime.date(2000, 1, 23),
-            datetime.time(12, 34, 56, tzinfo=datetime.timezone.utc),
+            date=datetime.date(2000, 1, 23),
+            time=datetime.time(12, 34, 56, tzinfo=datetime.timezone.utc),
         )
         self.assertEqual(result, expected)
 
     def test_valid_date_invalid_time(self) -> None:
         result = parse_date_and_time("2000-01-23", "invalid_time_string")
-        expected = DateAndTime(datetime.date(2000, 1, 23), None)
+        expected = DateAndTime(date=datetime.date(2000, 1, 23), time=None)
         self.assertEqual(result, expected)
 
     def test_invalid_date(self) -> None:

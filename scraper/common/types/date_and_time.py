@@ -1,10 +1,10 @@
 import datetime
-from dataclasses import dataclass
 from typing import Optional
 
+from pydantic import BaseModel
 
-@dataclass(frozen=True)
-class DateAndTime:
+
+class DateAndTime(BaseModel):
     """Very similar to datetime.datetime, but the time may be unknown"""
 
     date: datetime.date

@@ -96,7 +96,7 @@ class TestEvent(unittest.TestCase):
         event2 = Event(
             title="Event 2",
             start=None,
-            end=DateAndTime(date(2000, 1, 23), time(16, 0, 0, tzinfo=UTC)),
+            end=DateAndTime(date=date(2000, 1, 23), time=time(16, 0, 0, tzinfo=UTC)),
             description=None,
             url="http://example2.com",
             virtual=None,
