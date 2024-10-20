@@ -142,7 +142,7 @@ class TestEvent(unittest.TestCase):
         self.assertEqual(event_dict["open_to_public"], blank)
         self.assertEqual(event_dict["approved"], "pending")
         self.assertEqual(event_dict["scrape_source"], "Test Source")
-        self.assertEqual(event_dict["scrape_datetime"], "2010-03-21 01:23:45+00:00")
+        self.assertEqual(event_dict["scrape_datetime"], "2010-03-21T01:23:45+00:00")
 
     def test_jsonl_writer(self) -> None:
         event = TestEvent.create_example_event()

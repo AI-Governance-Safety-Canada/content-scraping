@@ -2,7 +2,13 @@ from datetime import date, datetime, time
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, computed_field, Field
+from pydantic import (
+    BaseModel,
+    computed_field,
+    Field,
+    field_serializer,
+    SerializationInfo,
+)
 
 from scraper.common.types.date_and_time import DateAndTime
 
@@ -68,6 +74,14 @@ class Event(BaseModel):
         if self.end:
             return self.end.time
         return None
+
+    @field_serializer("scrape_datetime", check_fields=True)
+    def serialize_scrape_datetime(
+        self,
+        scrape_datetime: datetime,
+        unused: SerializationInfo,
+    ) -> str:
+        return scrape_datetime.isoformat(timespec="seconds")
 
     def merge(self, other: "Event") -> "Event":
         """Use another event to fill in missing fields from self
