@@ -1,5 +1,9 @@
 beautifulsoup4 ~= 4.12
+black ~= 24.10
 google-api-python-client ~= 2.146
 google-auth ~= 2.35
+mypy ~= 1.12
 python-dotenv ~= 1.0
 requests ~= 2.0
+types-beautifulsoup4 ~= 4.12
+types-requests ~= 2.0
