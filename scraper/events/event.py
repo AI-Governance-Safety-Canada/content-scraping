@@ -25,39 +25,39 @@ class Event(BaseModel):
     """Details about an event"""
 
     title: Optional[str] = Field(
-        description="The name of the event",
+        description="The name of the event.",
     )
 
     start_date: Optional[date] = Field(
-        description="The date the event starts, excluding the time, in ISO-8601 format. If the date is not provided, this field is the empty string.",
+        description="The date the event starts, excluding the time, in ISO-8601 format. If the date is not known, this field is null.",
     )
     start_time: Optional[time] = Field(
-        description="The time the event starts, if available. Must be ISO-8601 format and include UTC offset. If the time is not provided, this field is the empty string.",
+        description="The time the event starts, if available. Must be ISO-8601 format and include UTC offset. If the time is not known, this field is null.",
     )
     end_date: Optional[date] = Field(
-        description="The date the event ends, excluding the time, in ISO-8601 format. If the date is not provided, this field is the empty string.",
+        description="The date the event ends, excluding the time, in ISO-8601 format. If the date is not known, this field is null.",
     )
     end_time: Optional[time] = Field(
-        description="The time the event ends, if available. Must be in ISO-8601 format and include the UTC offset. If the time is not provided, this field is the empty string.",
+        description="The time the event ends, if available. Must be in ISO-8601 format and include the UTC offset. If the time is not known, this field is null.",
     )
 
     description: Optional[str] = Field(
-        description="A short description of the event in one to three sentences if one is present. Otherwise, the empty string.",
+        description="A short description of the event in one to three sentences. If no description is present, this field is null.",
     )
     url: Optional[str] = Field(
-        description="The full URL for the event. If no URL is provided, this field is the empty string.",
+        description="The full URL for the event. If no URL is present, this field is null.",
     )
     virtual: Optional[bool] = Field(
-        description="How participants will join the event: either 'in-person', 'virtual' or 'hybrid'",
+        description="True if attendees can join the event virtually (event is online-only or hybrid). If not known, this field is null.",
     )
     location_country: Optional[str] = Field(
-        description="The country the event is located in, if provided. For for in-person or hybrid events without a listed location, this field is the empty string. For virtual events, this is set to 'online'.",
+        description="The country the event is located in, if known. For for in-person or hybrid events without a listed location, this field is null. For online-only events, this is set to 'online'.",
     )
     location_region: Optional[str] = Field(
-        description="The region (state, province, etc.) the event is located in, if provided. For for in-person or hybrid events without a listed location, this field is the empty string. For virtual events, this is set to 'online'.",
+        description="The region (state, province, etc.) the event is located in, if known. For for in-person or hybrid events without a listed location, this field is null. For online-only events, this is set to 'online'.",
     )
     location_city: Optional[str] = Field(
-        description="The city the event is located in, if provided. For for in-person or hybrid events without a listed location, this field is the empty string. For virtual events, this is set to 'online'.",
+        description="The city the event is located in, if known. For for in-person or hybrid events without a listed location, this field is null. For online-only events, this is set to 'online'.",
     )
 
     # These fields are not scraped but are used later in the pipeline
