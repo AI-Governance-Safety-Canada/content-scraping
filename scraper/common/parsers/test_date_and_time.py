@@ -1,27 +1,47 @@
 import datetime
 import unittest
 
-from .date_and_time import parse_date_and_time
-from scraper.common.types.date_and_time import DateAndTime
+from .date_and_time import parse_date, parse_time
 
 
-class TestParseDateAndTime(unittest.TestCase):
-    def test_valid_date_and_time(self) -> None:
-        result = parse_date_and_time("2000-01-23", "12:34:56+00:00")
-        expected = DateAndTime(
-            date=datetime.date(2000, 1, 23),
-            time=datetime.time(12, 34, 56, tzinfo=datetime.timezone.utc),
-        )
+class TestParseDate(unittest.TestCase):
+    def test_valid_date(self) -> None:
+        result = parse_date("2000-01-23")
+        expected = datetime.date(2000, 1, 23)
         self.assertEqual(result, expected)
 
-    def test_valid_date_invalid_time(self) -> None:
-        result = parse_date_and_time("2000-01-23", "invalid_time_string")
-        expected = DateAndTime(date=datetime.date(2000, 1, 23), time=None)
+    def test_wrong_format(self) -> None:
+        self.assertIsNone(parse_date("Jan 23, 2000"))
+
+    def test_wrong_type(self) -> None:
+        self.assertIsNone(parse_date(0))  # type: ignore[arg-type]
+
+
+class TestParseTime(unittest.TestCase):
+    def test_valid_time(self) -> None:
+        result = parse_time("12:34:56")
+        expected = datetime.time(12, 34, 56)
         self.assertEqual(result, expected)
 
-    def test_invalid_date(self) -> None:
-        result = parse_date_and_time("invalid_date_string", "12:34:56+00:00")
-        self.assertIsNone(result)
+        result = parse_time("12:34")
+        expected = datetime.time(12, 34, 0)
+        self.assertEqual(result, expected)
+
+        result = parse_time("12:34:56+00:00")
+        expected = datetime.time(12, 34, 56, tzinfo=datetime.timezone.utc)
+        self.assertEqual(result, expected)
+
+        result = parse_time("12:34+00:00")
+        expected = datetime.time(12, 34, 0, tzinfo=datetime.timezone.utc)
+        self.assertEqual(result, expected)
+
+    def test_wrong_format(self) -> None:
+        self.assertIsNone(parse_time("1:00 PM"))
+        self.assertIsNone(parse_time("12:34:56 UTC"))
+        self.assertIsNone(parse_time("12:34:56Z"))
+
+    def test_wrong_type(self) -> None:
+        self.assertIsNone(parse_time(0))  # type: ignore[arg-type]
 
 
 if __name__ == "__main__":

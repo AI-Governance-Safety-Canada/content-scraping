@@ -2,7 +2,7 @@ import datetime
 from typing import Any, Dict, Iterable, List, Optional
 from urllib.parse import urljoin
 
-from scraper.common.parsers.date_and_time import parse_date_and_time
+from scraper.common.parsers.date_and_time import parse_date, parse_time
 from scraper.common.parsers.field import fetch_field_with_type
 from .event import Event
 
@@ -42,11 +42,9 @@ def parse_response_item(
 
     start_date = fetch_field_with_type(response, "start_date", str) or ""
     start_time = fetch_field_with_type(response, "start_time", str) or ""
-    start = parse_date_and_time(start_date, start_time)
 
     end_date = fetch_field_with_type(response, "end_date", str) or ""
     end_time = fetch_field_with_type(response, "end_time", str) or ""
-    end = parse_date_and_time(end_date, end_time)
 
     description = fetch_field_with_type(response, "event_description", str)
     virtual = is_virtual(fetch_field_with_type(response, "event_attendence", str))
@@ -64,8 +62,10 @@ def parse_response_item(
 
     return Event(
         title=title,
-        start=start,
-        end=end,
+        start_date=parse_date(start_date),
+        start_time=parse_time(start_time),
+        end_date=parse_date(end_date),
+        end_time=parse_time(end_time),
         description=description,
         url=url,
         virtual=virtual,

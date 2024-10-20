@@ -1,35 +1,32 @@
-import datetime
 import logging
 from typing import Optional
+from datetime import date, time
 
-from scraper.common.types.date_and_time import DateAndTime
 
+def parse_date(date_string: str) -> Optional[date]:
+    """Attempt to parse the given date
 
-def parse_date_and_time(
-    date_string: str,
-    time_string: str,
-) -> Optional[DateAndTime]:
-    """Parse and combine the given date and time
-
-    Both arguments should be in ISO-8601 format. time_string should include the UTC
-    offset. If it does not, the resulting time is naive.
-
-    If the time cannot be parsed, set it to None.
-    If the date cannot be parsed, return None.
+    The string should be in ISO-8601 format. If it cannot be parsed, return None.
     """
     logger = logging.getLogger(__name__)
     try:
-        date = datetime.date.fromisoformat(date_string)
+        return date.fromisoformat(date_string)
     except (TypeError, ValueError):
         if date_string:
             logger.debug("Failed to parse date %r", date_string)
-        return None
+    return None
 
-    time: Optional[datetime.time] = None
+
+def parse_time(time_string: str) -> Optional[time]:
+    """Attempt to parse the given time
+
+    The string should be in ISO-8601 format and include the UTC offset. If it does not,
+    the resulting time is naive. If the string cannot be parsed, return None.
+    """
+    logger = logging.getLogger(__name__)
     try:
-        time = datetime.time.fromisoformat(time_string)
+        return time.fromisoformat(time_string)
     except (TypeError, ValueError):
         if time_string:
             logger.debug("Failed to parse time %r", time_string)
-
-    return DateAndTime(date=date, time=time)
+    return None

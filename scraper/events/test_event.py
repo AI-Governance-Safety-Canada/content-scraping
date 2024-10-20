@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 from .event import Approved, Event
-from scraper.common.types.date_and_time import DateAndTime
 from scraper.common.writers.csv import write_to_csv
 from scraper.common.writers.jsonl import write_to_jsonl
 
@@ -26,14 +25,10 @@ class TestEvent(unittest.TestCase):
     @staticmethod
     def create_example_event(
         title: Optional[str] = "Sample Event",
-        start: Optional[DateAndTime] = DateAndTime(
-            date=date(2000, 1, 23),
-            time=time(10, 0, 0, tzinfo=UTC),
-        ),
-        end: Optional[DateAndTime] = DateAndTime(
-            date=date(2000, 1, 23),
-            time=time(12, 0, 0, tzinfo=UTC),
-        ),
+        start_date: Optional[date] = date(2000, 1, 23),
+        start_time: Optional[time] = time(10, 0, 0, tzinfo=UTC),
+        end_date: Optional[date] = date(2000, 1, 23),
+        end_time: Optional[time] = time(12, 0, 0, tzinfo=UTC),
         description: Optional[str] = "A sample event for testing.",
         url: Optional[str] = "http://example.com",
         virtual: Optional[bool] = True,
@@ -45,8 +40,10 @@ class TestEvent(unittest.TestCase):
     ) -> Event:
         return Event(
             title=title,
-            start=start,
-            end=end,
+            start_date=start_date,
+            start_time=start_time,
+            end_date=end_date,
+            end_time=end_time,
             description=description,
             url=url,
             virtual=virtual,
@@ -82,8 +79,10 @@ class TestEvent(unittest.TestCase):
     def test_event_merge(self) -> None:
         event1 = Event(
             title=None,
-            start=None,
-            end=None,
+            start_date=None,
+            start_time=None,
+            end_date=None,
+            end_time=None,
             description=None,
             url="http://example1.com",
             virtual=True,
@@ -95,8 +94,10 @@ class TestEvent(unittest.TestCase):
         )
         event2 = Event(
             title="Event 2",
-            start=None,
-            end=DateAndTime(date=date(2000, 1, 23), time=time(16, 0, 0, tzinfo=UTC)),
+            start_date=None,
+            start_time=None,
+            end_date=date(2000, 1, 23),
+            end_time=time(16, 0, 0, tzinfo=UTC),
             description=None,
             url="http://example2.com",
             virtual=None,
