@@ -22,19 +22,43 @@ class Approved(Enum):
 
 
 class Event(BaseModel):
-    title: Optional[str]
+    """Details about an event"""
 
-    start_date: Optional[date]
-    start_time: Optional[time]
-    end_date: Optional[date]
-    end_time: Optional[time]
+    title: Optional[str] = Field(
+        description="The name of the event",
+    )
 
-    description: Optional[str]
-    url: Optional[str]
-    virtual: Optional[bool]
-    location_country: Optional[str]
-    location_region: Optional[str]
-    location_city: Optional[str]
+    start_date: Optional[date] = Field(
+        description="The date the event starts, excluding the time, in ISO-8601 format. If the date is not provided, this field is the empty string.",
+    )
+    start_time: Optional[time] = Field(
+        description="The time the event starts, if available. Must be ISO-8601 format and include UTC offset. If the time is not provided, this field is the empty string.",
+    )
+    end_date: Optional[date] = Field(
+        description="The date the event ends, excluding the time, in ISO-8601 format. If the date is not provided, this field is the empty string.",
+    )
+    end_time: Optional[time] = Field(
+        description="The time the event ends, if available. Must be in ISO-8601 format and include the UTC offset. If the time is not provided, this field is the empty string.",
+    )
+
+    description: Optional[str] = Field(
+        description="A short description of the event in one to three sentences if one is present. Otherwise, the empty string.",
+    )
+    url: Optional[str] = Field(
+        description="The full URL for the event. If no URL is provided, this field is the empty string.",
+    )
+    virtual: Optional[bool] = Field(
+        description="How participants will join the event: either 'in-person', 'virtual' or 'hybrid'",
+    )
+    location_country: Optional[str] = Field(
+        description="The country the event is located in, if provided. For for in-person or hybrid events without a listed location, this field is the empty string. For virtual events, this is set to 'online'.",
+    )
+    location_region: Optional[str] = Field(
+        description="The region (state, province, etc.) the event is located in, if provided. For for in-person or hybrid events without a listed location, this field is the empty string. For virtual events, this is set to 'online'.",
+    )
+    location_city: Optional[str] = Field(
+        description="The city the event is located in, if provided. For for in-person or hybrid events without a listed location, this field is the empty string. For virtual events, this is set to 'online'.",
+    )
 
     # These fields are not scraped but are used later in the pipeline
     accessible_to_canadians: SkipJsonSchema[Optional[float]] = Field(
