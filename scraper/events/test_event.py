@@ -76,6 +76,37 @@ class TestEvent(unittest.TestCase):
             datetime(2010, 3, 21, 1, 23, 45, tzinfo=UTC),
         )
 
+    def test_missing_date(self) -> None:
+        TestEvent.create_example_event(
+            start_date=None,
+            start_time=None,
+            end_date=None,
+            end_time=None,
+        )
+
+        TestEvent.create_example_event(
+            start_date=date(2000, 1, 23),
+            start_time=None,
+            end_date=date(2000, 1, 23),
+            end_time=None,
+        )
+
+        with self.assertRaises(TypeError):
+            TestEvent.create_example_event(
+                start_date=None,
+                start_time=time(10, 0, 0, tzinfo=UTC),
+                end_date=None,
+                end_time=None,
+            )
+
+        with self.assertRaises(TypeError):
+            TestEvent.create_example_event(
+                start_date=None,
+                start_time=None,
+                end_date=None,
+                end_time=time(12, 0, 0, tzinfo=UTC),
+            )
+
     def test_event_merge(self) -> None:
         event1 = Event(
             title=None,

@@ -6,6 +6,7 @@ from pydantic import (
     BaseModel,
     Field,
     field_serializer,
+    model_validator,
     SerializationInfo,
 )
 from pydantic.json_schema import SkipJsonSchema
@@ -68,6 +69,15 @@ class Event(BaseModel):
         unused: SerializationInfo,
     ) -> str:
         return time_instance.isoformat(timespec="seconds")
+
+    @model_validator(mode="after")
+    def check_date_times(self) -> "Event":
+        """Ensure that the date is set if the time is set"""
+        if self.start_date is None and self.start_time is not None:
+            raise TypeError("start_date is None but start_time is not")
+        if self.end_date is None and self.end_time is not None:
+            raise TypeError("end_date is None but end_time is not")
+        return self
 
     def merge(self, other: "Event") -> "Event":
         """Use another event to fill in missing fields from self
