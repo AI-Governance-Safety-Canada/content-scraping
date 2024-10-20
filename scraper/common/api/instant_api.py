@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Dict
+from typing import Any, cast, Dict
 
 import requests
 
@@ -56,7 +56,7 @@ class InstantApi(Api):
         if not response:
             return None
         try:
-            response_json = response.json()
+            response_json = cast(Dict[str, Any], response.json())
         except requests.exceptions.JSONDecodeError:
             logger.exception("Failed to parse response: %r", response.text)
             return None

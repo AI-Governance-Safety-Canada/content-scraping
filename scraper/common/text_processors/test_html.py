@@ -96,6 +96,7 @@ class TestConvertHtmlEntities(unittest.TestCase):
 class TestCleanContent(unittest.TestCase):
     def compare_html(self, expected: str, result: Optional[str]) -> None:
         self.assertIsNotNone(result)
+        assert result is not None  # redundant assertion to make mypy happy
         expected_soup = BeautifulSoup(expected, "html.parser")
         result_soup = BeautifulSoup(result, "html.parser")
         self.assertEqual(expected_soup.prettify(), result_soup.prettify())

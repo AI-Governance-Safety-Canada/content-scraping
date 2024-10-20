@@ -1,12 +1,15 @@
 import html
 import logging
 from collections.abc import Mapping, Sequence
-from typing import Any, Optional
+from typing import cast, Optional, TypeVar
 
 from bs4 import BeautifulSoup
 
 
-def convert_html_entities(data: Any) -> Any:
+T = TypeVar("T")
+
+
+def convert_html_entities(data: T) -> T:
     """Convert HTML entities to their corresponding Unicode characters
 
     This function is intended to work with data parsed from JSON.
@@ -15,12 +18,20 @@ def convert_html_entities(data: Any) -> Any:
     - For other types, return them unchanged.
     """
     if isinstance(data, str):
-        return html.unescape(data)
+        return cast(T, html.unescape(data))
     elif isinstance(data, Sequence):
-        return type(data)(convert_html_entities(item) for item in data)
+        return cast(
+            T,
+            type(data)(
+                convert_html_entities(item) for item in data
+            ),  # type: ignore[call-arg]
+        )
     elif isinstance(data, Mapping):
-        return type(data)(
-            (key, convert_html_entities(value)) for key, value in data.items()
+        return cast(
+            T,
+            type(data)(
+                (key, convert_html_entities(value)) for key, value in data.items()
+            ),  # type: ignore[call-arg]
         )
     return data
 

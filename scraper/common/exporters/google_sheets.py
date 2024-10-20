@@ -4,10 +4,10 @@ import json
 import logging
 import os
 from pathlib import Path
-from typing import Any, Iterable, List, Mapping, Sequence, Tuple
+from typing import Any, cast, Iterable, List, Mapping, Sequence, Tuple
 
 import dotenv
-from googleapiclient.discovery import build, Resource
+from googleapiclient.discovery import build, Resource  # type: ignore[import-untyped]
 from google.oauth2.service_account import Credentials
 
 
@@ -29,7 +29,7 @@ def connect(key_info: Mapping[str, str]) -> Resource:
     credentials = Credentials.from_service_account_info(
         key_info,
         scopes=["https://www.googleapis.com/auth/spreadsheets"],
-    )
+    )  # type: ignore[no-untyped-call]
     return build("sheets", "v4", credentials=credentials)
 
 
@@ -50,7 +50,7 @@ def fetch_rows(
         valueRenderOption="UNFORMATTED_VALUE",
     )
     result = request.execute()
-    return result.get("values", [])
+    return cast(List[List[Any]], result.get("values", []))
 
 
 def compare_headers(
@@ -107,7 +107,7 @@ def append_rows(
         body=body,
     )
     result = request.execute()
-    return result.get("updates", {}).get("updatedRows", 0)
+    return cast(int, result.get("updates", {}).get("updatedRows", 0))
 
 
 def main() -> None:
