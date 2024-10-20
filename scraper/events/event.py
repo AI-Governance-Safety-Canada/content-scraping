@@ -51,8 +51,8 @@ class Event(BaseModel):
     )
 
     # Metadata about where and when this event was scraped
-    scrape_source: str
-    scrape_datetime: datetime
+    scrape_source: SkipJsonSchema[str]
+    scrape_datetime: SkipJsonSchema[datetime]
 
     @field_serializer("scrape_datetime", check_fields=True)
     def serialize_scrape_datetime(
