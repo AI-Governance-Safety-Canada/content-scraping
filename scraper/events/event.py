@@ -9,6 +9,7 @@ from pydantic import (
     field_serializer,
     SerializationInfo,
 )
+from pydantic.json_schema import SkipJsonSchema
 
 from scraper.common.types.date_and_time import DateAndTime
 
@@ -39,9 +40,18 @@ class Event(BaseModel):
     location_city: Optional[str]
 
     # These fields are not scraped but are used later in the pipeline
-    accessible_to_canadians: Optional[float] = Field(init=False, default=None)
-    open_to_public: Optional[float] = Field(init=False, default=None)
-    approved: Approved = Field(init=False, default=Approved.PENDING)
+    accessible_to_canadians: SkipJsonSchema[Optional[float]] = Field(
+        init=False,
+        default=None,
+    )
+    open_to_public: SkipJsonSchema[Optional[float]] = Field(
+        init=False,
+        default=None,
+    )
+    approved: SkipJsonSchema[Approved] = Field(
+        init=False,
+        default=Approved.PENDING,
+    )
 
     # Metadata about where and when this event was scraped
     scrape_source: str
