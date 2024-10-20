@@ -216,6 +216,39 @@ class TestEvent(unittest.TestCase):
         # Check that the file didn't contain any unrecognized fields
         self.assertNotIn("unrecognized", event_read)
 
+    def test_json_schema(self) -> None:
+        schema = Event.model_json_schema()
+        self.assertEqual(schema["type"], "object")
+        self.assertEqual(
+            set(schema["required"]),
+            {
+                "title",
+                "start_date",
+                "start_time",
+                "end_date",
+                "end_time",
+                "description",
+                "url",
+                "virtual",
+                "location_country",
+                "location_region",
+                "location_city",
+            },
+        )
+
+        for prop in schema["properties"].values():
+            self.assertTrue(prop.get("description"))
+
+        for field in (
+            "start_date",
+            "start_time",
+            "end_date",
+            "end_time",
+        ):
+            self.assertNotIn("format", schema["properties"][field])
+            for subschema in schema["properties"][field].get("anyOf"):
+                self.assertNotIn("format", subschema)
+
 
 if __name__ == "__main__":
     unittest.main()
