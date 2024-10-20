@@ -1,6 +1,6 @@
 from datetime import date, datetime, time
 from enum import Enum
-from typing import Optional
+from typing import cast, List, Optional
 
 from pydantic import (
     BaseModel,
@@ -9,6 +9,7 @@ from pydantic import (
     model_validator,
     SerializationInfo,
 )
+from pydantic.config import JsonDict
 from pydantic.json_schema import SkipJsonSchema
 
 
@@ -21,6 +22,19 @@ class Approved(Enum):
         return self.value
 
 
+def remove_string_format(schema: JsonDict) -> None:
+    """Remove the format field from any string types
+
+    Modify the input dictionary in-place.
+
+    String formats are not universally supported, for instance by OpenAI's API.
+    """
+    if "format" in schema:
+        del schema["format"]
+    for subschema in cast(List[JsonDict], schema.get("anyOf", [])):
+        remove_string_format(subschema)
+
+
 class Event(BaseModel):
     """Details about an event"""
 
@@ -30,15 +44,19 @@ class Event(BaseModel):
 
     start_date: Optional[date] = Field(
         description="The date the event starts, excluding the time, in ISO-8601 format. If the date is not known, this field is null.",
+        json_schema_extra=remove_string_format,
     )
     start_time: Optional[time] = Field(
         description="The time the event starts, if available. Must be ISO-8601 format and include UTC offset. If the time is not known, this field is null.",
+        json_schema_extra=remove_string_format,
     )
     end_date: Optional[date] = Field(
         description="The date the event ends, excluding the time, in ISO-8601 format. If the date is not known, this field is null.",
+        json_schema_extra=remove_string_format,
     )
     end_time: Optional[time] = Field(
         description="The time the event ends, if available. Must be in ISO-8601 format and include the UTC offset. If the time is not known, this field is null.",
+        json_schema_extra=remove_string_format,
     )
 
     description: Optional[str] = Field(
