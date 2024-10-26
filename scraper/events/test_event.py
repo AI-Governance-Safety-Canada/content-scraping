@@ -76,6 +76,40 @@ class TestEvent(unittest.TestCase):
             datetime(2010, 3, 21, 1, 23, 45, tzinfo=UTC),
         )
 
+    def test_from_json(self) -> None:
+        event_json = """
+        {
+            "title": "Sample Event",
+            "start_date": "2000-01-23",
+            "start_time": "10:00:00+00:00",
+            "end_date": "2000-01-23",
+            "end_time": null,
+            "description": null,
+            "url": "http://example.com",
+            "virtual": true,
+            "location_country": "Country",
+            "location_region": null,
+            "location_city": "City"
+        }
+        """
+        event = Event.model_validate_json(event_json)
+        self.assertEqual(event.title, "Sample Event")
+        self.assertEqual(event.start_date, date(2000, 1, 23))
+        self.assertEqual(event.start_time, time(10, 0, 0, tzinfo=UTC))
+        self.assertEqual(event.end_date, date(2000, 1, 23))
+        self.assertIsNone(event.end_time)
+        self.assertIsNone(event.description, "A sample event for testing.")
+        self.assertEqual(event.url, "http://example.com")
+        self.assertTrue(event.virtual)
+        self.assertEqual(event.location_country, "Country")
+        self.assertIsNone(event.location_region)
+        self.assertEqual(event.location_city, "City")
+        self.assertIsNone(event.accessible_to_canadians)
+        self.assertIsNone(event.open_to_public)
+        self.assertEqual(event.approved, Approved.PENDING)
+        self.assertIsNone(event.scrape_source)
+        self.assertIsNone(event.scrape_datetime)
+
     def test_missing_date(self) -> None:
         TestEvent.create_example_event(
             start_date=None,

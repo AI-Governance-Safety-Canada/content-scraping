@@ -22,8 +22,8 @@ def is_virtual(attendence: Optional[str]) -> Optional[bool]:
 
 def parse_full_response(
     response: ApiResponse[EventList],
-    scrape_source: str,
-    scrape_datetime: datetime.datetime,
+    scrape_source: Optional[str],
+    scrape_datetime: Optional[datetime.datetime],
 ) -> Iterable[Event]:
     if response is None:
         return
@@ -42,8 +42,8 @@ def parse_full_response(
 
 def parse_response_item(
     response: Dict[Any, Any],
-    scrape_source: str,
-    scrape_datetime: datetime.datetime,
+    scrape_source: Optional[str],
+    scrape_datetime: Optional[datetime.datetime],
 ) -> Optional[Event]:
     logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ def parse_response_item(
     location_city = fetch_field_with_type(response, "event_city", str)
 
     url = fetch_field_with_type(response, "event_url", str)
-    if url:
+    if scrape_source and url:
         # Some URLs only contain the path, e.g. "/path/to/event.html"
         # Here we combine them with scrape_source to produce a full URL,
         # e.g. "https://mysite.com/path/to/event.html"

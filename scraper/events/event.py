@@ -92,9 +92,10 @@ class Event(BaseModel):
         default=Approved.PENDING,
     )
 
-    # Metadata about where and when this event was scraped
-    scrape_source: SkipJsonSchema[str]
-    scrape_datetime: SkipJsonSchema[datetime]
+    # Metadata about where and when this event was scraped. These are optional since
+    # they may be supplied after the Event is created.
+    scrape_source: SkipJsonSchema[Optional[str]] = None
+    scrape_datetime: SkipJsonSchema[Optional[datetime]] = None
 
     @field_serializer("scrape_datetime", check_fields=True)
     def serialize_scrape_datetime(
