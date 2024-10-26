@@ -3,7 +3,7 @@ import logging
 from typing import Any, Dict, Iterable, Optional
 from urllib.parse import urljoin
 
-from scraper.common.api.interface import ApiResponse
+from scraper.common.api.interface import ApiResponse, LeanResponse
 from scraper.common.parsers.date_and_time import parse_date, parse_time
 from scraper.common.parsers.field import fetch_field_with_type
 from .event import Event, EventList
@@ -28,11 +28,35 @@ def parse_full_response(
     if response is None:
         return
     if isinstance(response, EventList):
-        for evt in response.events:
-            evt.scrape_source = scrape_source
-            evt.scrape_datetime = scrape_datetime
-            yield evt
+        yield from augment_rich_response(
+            response=response,
+            scrape_source=scrape_source,
+            scrape_datetime=scrape_datetime,
+        )
         return
+    yield from parse_lean_response(
+        response=response,
+        scrape_source=scrape_source,
+        scrape_datetime=scrape_datetime,
+    )
+
+
+def augment_rich_response(
+    response: EventList,
+    scrape_source: Optional[str],
+    scrape_datetime: Optional[datetime.datetime],
+) -> Iterable[Event]:
+    for event in response.events:
+        event.scrape_source = scrape_source
+        event.scrape_datetime = scrape_datetime
+        yield event
+
+
+def parse_lean_response(
+    response: LeanResponse,
+    scrape_source: Optional[str],
+    scrape_datetime: Optional[datetime.datetime],
+) -> Iterable[Event]:
     for item in response.get("events", []):
         event = parse_response_item(
             response=item,
