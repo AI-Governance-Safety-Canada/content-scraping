@@ -100,17 +100,21 @@ class Event(BaseModel):
     @field_serializer("scrape_datetime", check_fields=True)
     def serialize_scrape_datetime(
         self,
-        scrape_datetime: datetime,
+        scrape_datetime: Optional[datetime],
         unused: SerializationInfo,
-    ) -> str:
+    ) -> Optional[str]:
+        if scrape_datetime is None:
+            return None
         return scrape_datetime.isoformat(timespec="seconds")
 
     @field_serializer("start_time", "end_time", check_fields=True)
     def serialize_time(
         self,
-        time_instance: time,
+        time_instance: Optional[time],
         unused: SerializationInfo,
-    ) -> str:
+    ) -> Optional[str]:
+        if time_instance is None:
+            return None
         return time_instance.isoformat(timespec="seconds")
 
     @model_validator(mode="after")
