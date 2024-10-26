@@ -3,12 +3,12 @@ from datetime import datetime
 from typing import Iterable
 
 from scraper.common.api.interface import Api
-from .event import Event
+from .event import Event, EventList
 from .sources import EVENT_SOURCES
 from .parser import parse_full_response
 
 
-def fetch_events(api: Api) -> Iterable[Event]:
+def fetch_events(api: Api[EventList]) -> Iterable[Event]:
     logger = logging.getLogger(__name__)
     for source in EVENT_SOURCES:
         logger.info("Scraping events from %s", source)
@@ -21,12 +21,10 @@ def fetch_events(api: Api) -> Iterable[Event]:
             scrape_datetime=datetime.now().astimezone(tz=None),
         ):
             logger.debug("%r", event)
-            if not event:
-                continue
             yield fetch_event_details(api, event)
 
 
-def fetch_event_details(api: Api, event: Event) -> Event:
+def fetch_event_details(api: Api[EventList], event: Event) -> Event:
     """Try to fill in additional details by scraping the event's own page"""
     logger = logging.getLogger(__name__)
 

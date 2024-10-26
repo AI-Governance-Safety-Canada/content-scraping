@@ -5,7 +5,7 @@ from typing import Any, cast, Dict
 import requests
 
 from scraper.common.text_processors.html import convert_html_entities
-from .interface import Api, ApiResponse
+from .interface import Api, ApiResponse, RichResponse
 from .http import post
 
 
@@ -18,7 +18,7 @@ def stringify_prompt(prompt: Dict[str, Any]) -> str:
     return json.dumps(json.dumps(prompt, separators=(",", ":")))
 
 
-class InstantApi(Api):
+class InstantApi(Api[RichResponse]):
     """Class for scraping webpages using InstantApi
 
     The API documentation lives here:
@@ -37,7 +37,7 @@ class InstantApi(Api):
         self.prompt = stringify_prompt(prompt)
         self.method_name = method_name
 
-    def scrape(self, url: str) -> ApiResponse:
+    def scrape(self, url: str) -> ApiResponse[RichResponse]:
         # We only need to submit a single request to the API. It will fetch the page for
         # us and parse it.
         logger = logging.getLogger(__name__)

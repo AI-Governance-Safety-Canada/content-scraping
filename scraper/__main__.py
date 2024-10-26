@@ -7,11 +7,12 @@ from pathlib import Path
 
 import dotenv
 
-from scraper.events.pipeline import fetch_events
-from scraper.events.prompt import EVENT_METHOD, EVENT_PROMPT
 from scraper.common.api.instant_api import InstantApi
 from scraper.common.filters.date_and_time import exclude_old_items
 from scraper.common.writers.format_selector import SUPPORTED_FORMATS, write_items
+from scraper.events.event import EventList
+from scraper.events.pipeline import fetch_events
+from scraper.events.prompt import EVENT_METHOD, EVENT_PROMPT
 
 
 # Datetime which is earlier than any legitimate ones we expect to encounter
@@ -84,7 +85,7 @@ def main() -> None:
             "Please see .env.example for the expected format."
         )
 
-    api = InstantApi(
+    api = InstantApi[EventList](
         api_key=api_key,
         prompt=EVENT_PROMPT,
         method_name=EVENT_METHOD,

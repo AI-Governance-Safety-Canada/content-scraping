@@ -1,11 +1,12 @@
 import datetime
 import logging
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, Optional
 from urllib.parse import urljoin
 
+from scraper.common.api.interface import ApiResponse
 from scraper.common.parsers.date_and_time import parse_date, parse_time
 from scraper.common.parsers.field import fetch_field_with_type
-from .event import Event
+from .event import Event, EventList
 
 
 def is_virtual(attendence: Optional[str]) -> Optional[bool]:
@@ -20,10 +21,15 @@ def is_virtual(attendence: Optional[str]) -> Optional[bool]:
 
 
 def parse_full_response(
-    response: Dict[str, List[Dict[Any, Any]]],
+    response: ApiResponse[EventList],
     scrape_source: str,
     scrape_datetime: datetime.datetime,
 ) -> Iterable[Event]:
+    if response is None:
+        return
+    if isinstance(response, EventList):
+        yield from response.events
+        return
     for item in response.get("events", []):
         event = parse_response_item(
             response=item,

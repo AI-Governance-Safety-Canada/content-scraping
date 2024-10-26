@@ -1,10 +1,10 @@
-from .interface import Api, ApiResponse
+from .interface import Api, ApiResponse, RichResponse
 
 
-class MockApi(Api):
+class MockApi(Api[RichResponse]):
     """Mock API for testing the pipeline with dummy data"""
 
-    def scrape(self, _: str) -> ApiResponse:
+    def scrape(self, _: str) -> ApiResponse[RichResponse]:
         return {
             "events": [
                 {

@@ -1,10 +1,14 @@
 from abc import abstractmethod, ABC
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Generic, List, Optional, TypeVar, Union
+
+from pydantic import BaseModel
 
 
-ApiResponse = Optional[Dict[str, List[Dict[Any, Any]]]]
+LeanResponse = Dict[str, List[Dict[Any, Any]]]
+RichResponse = TypeVar("RichResponse", bound=BaseModel)
+ApiResponse = Optional[Union[LeanResponse | RichResponse]]
 
 
-class Api(ABC):
+class Api(ABC, Generic[RichResponse]):
     @abstractmethod
-    def scrape(self, url: str) -> ApiResponse: ...
+    def scrape(self, url: str) -> ApiResponse[RichResponse]: ...
