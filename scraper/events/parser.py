@@ -28,7 +28,10 @@ def parse_full_response(
     if response is None:
         return
     if isinstance(response, EventList):
-        yield from response.events
+        for evt in response.events:
+            evt.scrape_source = scrape_source
+            evt.scrape_datetime = scrape_datetime
+            yield evt
         return
     for item in response.get("events", []):
         event = parse_response_item(
