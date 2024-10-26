@@ -47,7 +47,7 @@ class Event(BaseModel):
         json_schema_extra=remove_string_format,
     )
     start_time: Optional[time] = Field(
-        description="The time the event starts, if available. Must be ISO-8601 format and include UTC offset. If the time is not known, this field is null.",
+        description="The time the event starts, excluding the date, if available. Must be ISO-8601 format and include UTC offset. If the time is not known, this field is null.",
         json_schema_extra=remove_string_format,
     )
     end_date: Optional[date] = Field(
@@ -55,7 +55,7 @@ class Event(BaseModel):
         json_schema_extra=remove_string_format,
     )
     end_time: Optional[time] = Field(
-        description="The time the event ends, if available. Must be in ISO-8601 format and include the UTC offset. If the time is not known, this field is null.",
+        description="The time the event ends, excluding the date, if available. Must be in ISO-8601 format and include the UTC offset. If the time is not known, this field is null.",
         json_schema_extra=remove_string_format,
     )
 
