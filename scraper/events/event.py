@@ -130,3 +130,7 @@ class Event(BaseModel):
             if getattr(self, field_name) is None:
                 setattr(self, field_name, value)
         return self
+
+
+class EventList(BaseModel):
+    events: List[Event] = Field(description="A list of events")
