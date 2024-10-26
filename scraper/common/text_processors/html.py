@@ -40,7 +40,13 @@ def clean_content(content: str) -> Optional[str]:
     """Filter out irrelevant parts of a webpage's content
 
     1. Select the <body> element.
-    2. Remove all <script> elements.
+    2. Remove all of the following elements:
+        <script>
+        <style>
+        <header>
+        <footer>
+        <form>
+        <svg>
     """
     logger = logging.getLogger(__name__)
     soup = BeautifulSoup(content, "html.parser")
@@ -49,7 +55,15 @@ def clean_content(content: str) -> Optional[str]:
         logger.warning("Content does not contain body element")
         return None
 
-    for element in body.find_all("script"):
-        element.decompose()
+    for tag_to_delete in (
+        "script",
+        "style",
+        "header",
+        "footer",
+        "form",
+        "svg",
+    ):
+        for element in body.find_all(tag_to_delete):
+            element.decompose()
 
     return body.prettify()
