@@ -49,6 +49,7 @@ def augment_rich_response(
     for event in response.events:
         event.scrape_source = scrape_source
         event.scrape_datetime = scrape_datetime
+        expand_url(event)
         yield event
 
 
@@ -83,21 +84,15 @@ def parse_response_item(
     end_time = fetch_field_with_type(response, "end_time", str) or ""
 
     description = fetch_field_with_type(response, "event_description", str)
+    url = fetch_field_with_type(response, "event_url", str)
     virtual = is_virtual(fetch_field_with_type(response, "event_attendence", str))
 
     location_country = fetch_field_with_type(response, "event_country", str)
     location_region = fetch_field_with_type(response, "event_region", str)
     location_city = fetch_field_with_type(response, "event_city", str)
 
-    url = fetch_field_with_type(response, "event_url", str)
-    if scrape_source and url:
-        # Some URLs only contain the path, e.g. "/path/to/event.html"
-        # Here we combine them with scrape_source to produce a full URL,
-        # e.g. "https://mysite.com/path/to/event.html"
-        url = urljoin(scrape_source, url)
-
     try:
-        return Event(
+        event = Event(
             title=title,
             start_date=parse_date(start_date),
             start_time=parse_time(start_time),
@@ -114,4 +109,21 @@ def parse_response_item(
         )
     except (TypeError, ValueError) as error:
         logger.warning("Failed to create event: %r", error)
-    return None
+        return None
+
+    expand_url(event)
+    return event
+
+
+def expand_url(event: Event) -> None:
+    """Expand an event's URL to be a full one
+
+    Some URLs only contain the path, e.g. "/path/to/event.html"
+    Here we combine them with scrape_source to produce a full URL,
+    e.g. "https://mysite.com/path/to/event.html"
+    """
+    if not event.url:
+        return
+    if not event.scrape_source:
+        return
+    event.url = urljoin(event.scrape_source, event.url)
