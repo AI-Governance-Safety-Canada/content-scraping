@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import List, Optional
+from typing import Iterable, List, Optional
 
 
 def configure_logging(
@@ -21,3 +21,19 @@ def configure_logging(
         datefmt="%Y-%m-%dT%H:%M:%S%z",
         level=level,
     )
+
+
+def set_log_level(
+    level: int = logging.INFO,
+    logger_names: Iterable[str] = (
+        "httpcore",
+        "httpx",
+        "urllib3",
+    ),
+) -> None:
+    """Set the log level for the given loggers
+
+    This is helpful for silencing unhelpful logging from noisy libraries
+    """
+    for name in logger_names:
+        logging.getLogger(name).setLevel(level)

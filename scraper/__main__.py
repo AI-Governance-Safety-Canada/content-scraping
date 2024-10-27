@@ -8,7 +8,7 @@ import dotenv
 
 from scraper.common.api.openai import OpenAIApi
 from scraper.common.filters.date_and_time import exclude_old_items
-from scraper.common.logs.config import configure_logging
+from scraper.common.logs.config import configure_logging, set_log_level
 from scraper.common.writers.format_selector import SUPPORTED_FORMATS, write_items
 from scraper.events.event import EventList
 from scraper.events.pipeline import fetch_events
@@ -62,6 +62,7 @@ def main() -> None:
     args = parser.parse_args()
 
     configure_logging()
+    set_log_level()
 
     if not args.no_dot_env:
         if not dotenv.load_dotenv():
