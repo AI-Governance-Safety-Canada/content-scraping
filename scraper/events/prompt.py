@@ -1,6 +1,12 @@
 EVENT_METHOD = "scrape_event_information"
 
-EVENT_PROMPT = {
+EVENT_PROMPT_OVERVIEW = """
+Please parse the requested information for all events listed below.
+""".strip().replace(
+    "\n", " "
+)
+
+EVENT_DETAILS = {
     "events": [
         {
             "event_name": "<The name of the event>",

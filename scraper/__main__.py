@@ -12,6 +12,7 @@ from scraper.common.filters.date_and_time import exclude_old_items
 from scraper.common.writers.format_selector import SUPPORTED_FORMATS, write_items
 from scraper.events.event import EventList
 from scraper.events.pipeline import fetch_events
+from scraper.events.prompt import EVENT_PROMPT_OVERVIEW
 
 
 # Datetime which is earlier than any legitimate ones we expect to encounter
@@ -86,7 +87,7 @@ def main() -> None:
 
     api = OpenAIApi[EventList](
         model="gpt-4o-mini",
-        prompt="Please parse the requested information for all events listed below",
+        prompt=EVENT_PROMPT_OVERVIEW,
         response_format=EventList,
     )
     events = fetch_events(api)
