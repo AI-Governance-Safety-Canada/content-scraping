@@ -146,24 +146,24 @@ class TestEvent(unittest.TestCase):
         {
             "title": "null",
             "start": {
-                "year": null,
-                "month": null,
-                "day": null,
-                "hour": null,
-                "minute": null,
-                "second": null,
-                "utc_offset_hour": null,
-                "utc_offset_minute": null
+                "year": "null",
+                "month": "null",
+                "day": "null",
+                "hour": "null",
+                "minute": "null",
+                "second": "null",
+                "utc_offset_hour": "null",
+                "utc_offset_minute": "null"
             },
             "end": {
-                "year": null,
-                "month": null,
-                "day": null,
-                "hour": null,
-                "minute": null,
-                "second": null,
-                "utc_offset_hour": null,
-                "utc_offset_minute": null
+                "year": "null",
+                "month": "null",
+                "day": "null",
+                "hour": "null",
+                "minute": "null",
+                "second": "null",
+                "utc_offset_hour": "null",
+                "utc_offset_minute": "null"
             },
             "description": "null",
             "url": "null",

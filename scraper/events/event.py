@@ -1,18 +1,18 @@
 from datetime import datetime
 from enum import Enum
-from typing import Any, List, Optional
+from typing import List, Optional
 
 from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
     field_serializer,
-    field_validator,
     SerializationInfo,
 )
 from pydantic.json_schema import SkipJsonSchema
 
 from scraper.common.types.date_and_time import DateAndTime
+from scraper.common.types.null_string_validator import NullStringValidator
 
 
 class Approved(Enum):
@@ -24,7 +24,7 @@ class Approved(Enum):
         return self.value
 
 
-class Event(BaseModel):
+class Event(NullStringValidator):
     """Details about an event"""
 
     model_config = ConfigDict(json_schema_extra={"additionalProperties": False})
@@ -87,17 +87,6 @@ class Event(BaseModel):
         if scrape_datetime is None:
             return None
         return scrape_datetime.isoformat(timespec="seconds")
-
-    @field_validator("*", mode="before")
-    @classmethod
-    def null_string_to_none(cls, value: Any) -> Any:
-        """Convert the string "null" to None
-
-        The API can sometimes return the string "null" instead of the JSON value null.
-        """
-        if isinstance(value, str) and value.lower() == "null":
-            return None
-        return value
 
     def merge(self, other: "Event") -> "Event":
         """Use another event to fill in missing fields from self

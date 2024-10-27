@@ -4,6 +4,31 @@ from .date_and_time import DateAndTime
 
 
 class TestDateAndTime(unittest.TestCase):
+    def test_null_string(self) -> None:
+        dat_json = """
+        {
+            "year": "null",
+            "month": "null",
+            "day": "null",
+            "hour": "null",
+            "minute": "null",
+            "second": "null",
+            "utc_offset_hour": "null",
+            "utc_offset_minute": "null"
+        }
+        """
+        dat = DateAndTime.model_validate_json(dat_json)
+        self.assertIsNone(dat.year)
+        self.assertIsNone(dat.month)
+        self.assertIsNone(dat.day)
+        self.assertIsNone(dat.hour)
+        self.assertIsNone(dat.minute)
+        self.assertIsNone(dat.second)
+        self.assertIsNone(dat.utc_offset_hour)
+        self.assertIsNone(dat.utc_offset_minute)
+        self.assertIsNone(dat.date)
+        self.assertIsNone(dat.time)
+
     def test_serialize_nothing_known(self) -> None:
         dat = DateAndTime(
             year=None,

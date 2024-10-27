@@ -1,10 +1,12 @@
 import datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field, computed_field, model_serializer
+from pydantic import ConfigDict, Field, computed_field, model_serializer
+
+from .null_string_validator import NullStringValidator
 
 
-class DateAndTime(BaseModel):
+class DateAndTime(NullStringValidator):
     model_config = ConfigDict(json_schema_extra={"additionalProperties": False})
 
     year: Optional[int] = Field(
