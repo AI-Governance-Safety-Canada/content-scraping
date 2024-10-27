@@ -2,6 +2,7 @@ EVENT_METHOD = "scrape_event_information"
 
 EVENT_PROMPT_OVERVIEW = """
 Please parse the requested information for all events listed below.
+Be sure not to fabricate and details. Use null when a field cannot be found.
 """.strip().replace(
     "\n", " "
 )
