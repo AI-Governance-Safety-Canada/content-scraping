@@ -20,7 +20,7 @@ def fetch_events(api: Api[EventList]) -> Iterable[Event]:
             scrape_source=source,
             scrape_datetime=datetime.now().astimezone(tz=None),
         ):
-            logger.debug("%r", event)
+            logger.debug("Event: %r", event)
             yield fetch_event_details(api, event)
 
 
@@ -42,6 +42,7 @@ def fetch_event_details(api: Api[EventList], event: Event) -> Event:
         scrape_datetime=event.scrape_datetime,
     )
     for detail in additional_details:
+        logger.debug("Event details: %r", event)
         # Prefer info from the event's own page
         event = detail.merge(event)
         # Only use the first event found on the details page
