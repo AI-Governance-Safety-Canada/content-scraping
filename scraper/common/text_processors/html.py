@@ -50,6 +50,7 @@ def clean_content(content: str) -> Optional[str]:
     """
     logger = logging.getLogger(__name__)
     soup = BeautifulSoup(content, "html.parser")
+    starting_length = len(str(soup))
     body = soup.body
     if body is None:
         logger.warning("Content does not contain body element")
@@ -66,4 +67,11 @@ def clean_content(content: str) -> Optional[str]:
         for element in body.find_all(tag_to_delete):
             element.decompose()
 
+    final_length = len(str(body))
+    logger.info(
+        "Reduced content length from %d to %d (%.0f%%)",
+        starting_length,
+        final_length,
+        100 * final_length / starting_length,
+    )
     return body.prettify()

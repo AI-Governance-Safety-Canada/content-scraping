@@ -55,6 +55,8 @@ class OpenAIApi(Api[RichResponse]):
             logger.error("Failed to scrape %s: %r", url, error)
             return None
 
+        logger.debug("Usage information: %s", completion.usage)
+
         if len(completion.choices) == 0:
             logger.warning("Model returned no completions for %s", url)
             return None
