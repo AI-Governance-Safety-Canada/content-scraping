@@ -63,3 +63,13 @@ class DateAndTime(NullStringValidator):
             return self.date.isoformat()
         combined = datetime.datetime.combine(self.date, self.time)
         return combined.isoformat(timespec="seconds")
+
+    def merge(self, other: "DateAndTime") -> "DateAndTime":
+        """Use another instance to fill in missing fields from self
+
+        Non-None fields from self are preserved. None fields are modified in-place.
+        """
+        for field_name, value in other:
+            if getattr(self, field_name) is None:
+                setattr(self, field_name, value)
+        return self

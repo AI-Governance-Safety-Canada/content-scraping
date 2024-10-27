@@ -260,20 +260,20 @@ class TestEvent(unittest.TestCase):
         self.assertEqual(event.end.time, time(12, 34, 56, tzinfo=UTC))
 
     def test_event_merge(self) -> None:
-        blank_date_and_time = DateAndTime(
-            year=None,
-            month=None,
-            day=None,
+        only_date = DateAndTime(
+            year=2000,
+            month=1,
+            day=23,
             hour=None,
             minute=None,
             second=None,
             utc_offset_hour=None,
             utc_offset_minute=None,
         )
-        full_date_and_time = DateAndTime(
-            year=2000,
-            month=1,
-            day=23,
+        only_time = DateAndTime(
+            year=None,
+            month=None,
+            day=None,
             hour=16,
             minute=0,
             second=0,
@@ -283,8 +283,8 @@ class TestEvent(unittest.TestCase):
 
         event1 = Event(
             title=None,
-            start=blank_date_and_time,
-            end=full_date_and_time,
+            start=only_date,
+            end=only_time,
             description=None,
             url="http://example1.com",
             virtual=True,
@@ -296,8 +296,8 @@ class TestEvent(unittest.TestCase):
         )
         event2 = Event(
             title="Event 2",
-            start=blank_date_and_time,
-            end=full_date_and_time,
+            start=only_time,
+            end=only_date,
             description=None,
             url="http://example2.com",
             virtual=None,
@@ -310,8 +310,8 @@ class TestEvent(unittest.TestCase):
         event1.merge(event2)
 
         self.assertEqual(event1.title, "Event 2")
-        self.assertIsNone(event1.start.date)
-        self.assertIsNone(event1.start.time)
+        self.assertEqual(event1.start.date, date(2000, 1, 23))
+        self.assertEqual(event1.start.time, time(16, 0, 0, tzinfo=UTC))
         self.assertEqual(event1.end.date, date(2000, 1, 23))
         self.assertEqual(event1.end.time, time(16, 0, 0, tzinfo=UTC))
         self.assertIsNone(event1.description)

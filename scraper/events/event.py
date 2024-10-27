@@ -94,8 +94,11 @@ class Event(NullStringValidator):
         Non-None fields from self are preserved. None fields are modified in-place.
         """
         for field_name, value in other:
-            if getattr(self, field_name) is None:
+            attribute = getattr(self, field_name)
+            if attribute is None:
                 setattr(self, field_name, value)
+            elif isinstance(attribute, DateAndTime):
+                attribute.merge(value)
         return self
 
 
