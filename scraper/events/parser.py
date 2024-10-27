@@ -4,7 +4,7 @@ from typing import Any, Dict, Iterable, Optional
 from urllib.parse import urljoin
 
 from scraper.common.api.interface import ApiResponse, LeanResponse
-from scraper.common.parsers.date_and_time import parse_date, parse_time
+from scraper.common.parsers.date_and_time import parse_date_and_time
 from scraper.common.parsers.field import fetch_field_with_type
 from .event import Event, EventList
 
@@ -77,11 +77,8 @@ def parse_response_item(
 
     title = fetch_field_with_type(response, "event_name", str)
 
-    start_date = fetch_field_with_type(response, "start_date", str) or ""
-    start_time = fetch_field_with_type(response, "start_time", str) or ""
-
-    end_date = fetch_field_with_type(response, "end_date", str) or ""
-    end_time = fetch_field_with_type(response, "end_time", str) or ""
+    start = fetch_field_with_type(response, "start_date", dict) or {}
+    end = fetch_field_with_type(response, "end_date", dict) or {}
 
     description = fetch_field_with_type(response, "event_description", str)
     url = fetch_field_with_type(response, "event_url", str)
@@ -94,10 +91,8 @@ def parse_response_item(
     try:
         event = Event(
             title=title,
-            start_date=parse_date(start_date),
-            start_time=parse_time(start_time),
-            end_date=parse_date(end_date),
-            end_time=parse_time(end_time),
+            start=parse_date_and_time(start),
+            end=parse_date_and_time(end),
             description=description,
             url=url,
             virtual=virtual,

@@ -1,6 +1,6 @@
-from datetime import date, datetime, time
+from datetime import datetime
 from enum import Enum
-from typing import Any, cast, List, Optional
+from typing import Any, List, Optional
 
 from pydantic import (
     BaseModel,
@@ -8,11 +8,11 @@ from pydantic import (
     Field,
     field_serializer,
     field_validator,
-    model_validator,
     SerializationInfo,
 )
-from pydantic.config import JsonDict
 from pydantic.json_schema import SkipJsonSchema
+
+from scraper.common.types.date_and_time import DateAndTime
 
 
 class Approved(Enum):
@@ -24,19 +24,6 @@ class Approved(Enum):
         return self.value
 
 
-def remove_string_format(schema: JsonDict) -> None:
-    """Remove the format field from any string types
-
-    Modify the input dictionary in-place.
-
-    String formats are not universally supported, for instance by OpenAI's API.
-    """
-    if "format" in schema:
-        del schema["format"]
-    for subschema in cast(List[JsonDict], schema.get("anyOf", [])):
-        remove_string_format(subschema)
-
-
 class Event(BaseModel):
     """Details about an event"""
 
@@ -46,21 +33,11 @@ class Event(BaseModel):
         description="The name of the event.",
     )
 
-    start_date: Optional[date] = Field(
-        description="The date the event starts, excluding the time, in ISO-8601 format. If the date is not known, this field is null.",
-        json_schema_extra=remove_string_format,
+    start: DateAndTime = Field(
+        description="When the event starts",
     )
-    start_time: Optional[time] = Field(
-        description="The time the event starts, excluding the date, if available. Must be ISO-8601 format and include UTC offset. If the time is not known, this field is null.",
-        json_schema_extra=remove_string_format,
-    )
-    end_date: Optional[date] = Field(
-        description="The date the event ends, excluding the time, in ISO-8601 format. If the date is not known, this field is null.",
-        json_schema_extra=remove_string_format,
-    )
-    end_time: Optional[time] = Field(
-        description="The time the event ends, excluding the date, if available. Must be in ISO-8601 format and include the UTC offset. If the time is not known, this field is null.",
-        json_schema_extra=remove_string_format,
+    end: DateAndTime = Field(
+        description="When the event ends",
     )
 
     description: Optional[str] = Field(
@@ -111,16 +88,6 @@ class Event(BaseModel):
             return None
         return scrape_datetime.isoformat(timespec="seconds")
 
-    @field_serializer("start_time", "end_time", check_fields=True)
-    def serialize_time(
-        self,
-        time_instance: Optional[time],
-        unused: SerializationInfo,
-    ) -> Optional[str]:
-        if time_instance is None:
-            return None
-        return time_instance.isoformat(timespec="seconds")
-
     @field_validator("*", mode="before")
     @classmethod
     def null_string_to_none(cls, value: Any) -> Any:
@@ -131,15 +98,6 @@ class Event(BaseModel):
         if isinstance(value, str) and value.lower() == "null":
             return None
         return value
-
-    @model_validator(mode="after")
-    def check_date_times(self) -> "Event":
-        """Ensure that the date is set if the time is set"""
-        if self.start_date is None and self.start_time is not None:
-            raise TypeError("start_date is None but start_time is not")
-        if self.end_date is None and self.end_time is not None:
-            raise TypeError("end_date is None but end_time is not")
-        return self
 
     def merge(self, other: "Event") -> "Event":
         """Use another event to fill in missing fields from self

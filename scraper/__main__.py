@@ -86,7 +86,7 @@ def main() -> None:
     events = exclude_old_items(
         events,
         cutoff=args.after,
-        key=lambda event: event.start_date or EPOCH_START,
+        key=lambda event: event.start.date or EPOCH_START,
     )
     write_items(
         items=events,
