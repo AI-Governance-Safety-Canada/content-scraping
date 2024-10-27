@@ -8,42 +8,72 @@ jobs:
   scrape:
     name: Scrape and Publish Events
     runs-on: ubuntu-latest
+    env:
+      SCRAPE_DIR: content-scraping
+      CLASSIFY_DIR: event-classifier
+      SCRAPE_OUTPUT: ${{ github.workspace }}/scraped.csv
+      CLASSIFY_OUTPUT: ${{ github.workspace }}/classified.csv
 
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-          cache: 'pip'
-      - run: pip install -r requirements.txt
-
-      - name: Clear existing output file
-        run: rm -f output.csv
-
       - name: Generate timestamp
         id: generate-timestamp
         run: echo "TIMESTAMP=$(date +%Y-%m-%dT%H-%M-%S)" >> "$GITHUB_OUTPUT"
 
-      - name: Scrape events
+      - uses: actions/checkout@v4
+        name: Check out scraper repo
+        with:
+          path: ${{ env.SCRAPE_DIR }}
+
+      - uses: actions/checkout@v4
+        name: Check out classifier repo
+        with:
+          repository: AI-Governance-Safety-Canada/event-classifier
+          path: ${{ env.CLASSIFY_DIR }}
+
+      - uses: actions/setup-python@v5
+        name: Set up python
+        with:
+          python-version: '3.x'
+          cache: 'pip'
+
+      - name: Install scraper dependencies
+        working-directory: ${{ github.workspace }}/${{ env.SCRAPE_DIR }}
+        run: pip install -r requirements.txt
+
+      - name: Install classifier dependencies
+        working-directory: ${{ github.workspace }}/${{ env.CLASSIFY_DIR }}
+        run: pip install -r requirements.txt
+
+      - name: Clear existing output file
+        run: rm -f ${{ env.SCRAPE_OUTPUT }}
+
+      - name: Run scraper
+        working-directory: ${{ github.workspace }}/${{ env.SCRAPE_DIR }}
         env:
           INSTANT_API_KEY: ${{ secrets.INSTANT_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: python -m scraper --no-dot-env output.csv
+        run: python -m scraper --no-dot-env ${{ env.SCRAPE_OUTPUT }}
 
       - name: Archive scrape output and log
         uses: actions/upload-artifact@v4
         with:
           name: scrape-output_${{ steps.generate-timestamp.outputs.TIMESTAMP}}
           path: |
-            output.csv
-            log.txt
+            ${{ env.SCRAPE_OUTPUT }}
+            ${{ github.workspace }}/${{ env.SCRAPE_DIR }}/log.txt
+
+      - name: Classify events
+        # Only run if all previous steps succeeded
+        if: ${{ success() }}
+        working-directory: ${{ github.workspace }}/${{ env.CLASSIFY_DIR }}
+        run: python bart.py ${{ env.SCRAPE_OUTPUT }} ${{ env.CLASSIFY_OUTPUT }}
 
       - name: Publish events
         # Only run if all previous steps succeeded
         if: ${{ success() }}
+        working-directory: ${{ github.workspace }}/${{ env.SCRAPE_DIR }}
         env:
           GOOGLE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
           GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
           GOOGLE_SHEET_NAME: ${{ secrets.GOOGLE_SHEET_NAME }}
-        run: python common/exporters/google_sheets.py --no-dot-env output.csv
+        run: python scraper/common/exporters/google_sheets.py --no-dot-env ${{ env.SCRAPE_OUTPUT }}
