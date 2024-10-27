@@ -303,6 +303,7 @@ class TestEvent(unittest.TestCase):
                 "location_city",
             },
         )
+        self.assertFalse(schema["additionalProperties"])
 
         for prop in schema["properties"].values():
             self.assertTrue(prop.get("description"))

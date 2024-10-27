@@ -4,6 +4,7 @@ from typing import Any, cast, List, Optional
 
 from pydantic import (
     BaseModel,
+    ConfigDict,
     Field,
     field_serializer,
     field_validator,
@@ -38,6 +39,8 @@ def remove_string_format(schema: JsonDict) -> None:
 
 class Event(BaseModel):
     """Details about an event"""
+
+    model_config = ConfigDict(json_schema_extra={"additionalProperties": False})
 
     title: Optional[str] = Field(
         description="The name of the event.",
@@ -150,4 +153,6 @@ class Event(BaseModel):
 
 
 class EventList(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"additionalProperties": False})
+
     events: List[Event] = Field(description="A list of events")
