@@ -110,6 +110,40 @@ class TestEvent(unittest.TestCase):
         self.assertIsNone(event.scrape_source)
         self.assertIsNone(event.scrape_datetime)
 
+    def test_null_string(self) -> None:
+        event_json = """
+        {
+            "title": "null",
+            "start_date": "null",
+            "start_time": "null",
+            "end_date": "null",
+            "end_time": "null",
+            "description": "null",
+            "url": "null",
+            "virtual": "null",
+            "location_country": "null",
+            "location_region": "null",
+            "location_city": "null"
+        }
+        """
+        event = Event.model_validate_json(event_json)
+        self.assertIsNone(event.title)
+        self.assertIsNone(event.start_date)
+        self.assertIsNone(event.start_time)
+        self.assertIsNone(event.end_date)
+        self.assertIsNone(event.end_time)
+        self.assertIsNone(event.description)
+        self.assertIsNone(event.url)
+        self.assertIsNone(event.virtual)
+        self.assertIsNone(event.location_country)
+        self.assertIsNone(event.location_region)
+        self.assertIsNone(event.location_city)
+        self.assertIsNone(event.accessible_to_canadians)
+        self.assertIsNone(event.open_to_public)
+        self.assertEqual(event.approved, Approved.PENDING)
+        self.assertIsNone(event.scrape_source)
+        self.assertIsNone(event.scrape_datetime)
+
     def test_missing_date(self) -> None:
         TestEvent.create_example_event(
             start_date=None,

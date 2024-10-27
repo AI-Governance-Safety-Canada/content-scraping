@@ -1,11 +1,12 @@
 from datetime import date, datetime, time
 from enum import Enum
-from typing import cast, List, Optional
+from typing import Any, cast, List, Optional
 
 from pydantic import (
     BaseModel,
     Field,
     field_serializer,
+    field_validator,
     model_validator,
     SerializationInfo,
 )
@@ -116,6 +117,17 @@ class Event(BaseModel):
         if time_instance is None:
             return None
         return time_instance.isoformat(timespec="seconds")
+
+    @field_validator("*", mode="before")
+    @classmethod
+    def null_string_to_none(cls, value: Any) -> Any:
+        """Convert the string "null" to None
+
+        The API can sometimes return the string "null" instead of the JSON value null.
+        """
+        if isinstance(value, str) and value.lower() == "null":
+            return None
+        return value
 
     @model_validator(mode="after")
     def check_date_times(self) -> "Event":
