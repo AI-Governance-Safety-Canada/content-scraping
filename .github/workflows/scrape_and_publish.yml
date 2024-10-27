@@ -28,6 +28,7 @@ jobs:
       - name: Scrape events
         env:
           INSTANT_API_KEY: ${{ secrets.INSTANT_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: python -m scraper --no-dot-env output.csv
 
       - name: Archive scrape output and log
