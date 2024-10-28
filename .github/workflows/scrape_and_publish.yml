@@ -54,14 +54,6 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: python -m scraper --no-dot-env ${{ env.SCRAPE_OUTPUT }}
 
-      - name: Archive scrape output and log
-        uses: actions/upload-artifact@v4
-        with:
-          name: scrape-output_${{ steps.generate-timestamp.outputs.TIMESTAMP}}
-          path: |
-            ${{ env.SCRAPE_OUTPUT }}
-            ${{ github.workspace }}/${{ env.SCRAPE_DIR }}/log.txt
-
       - name: Classify events
         # Only run if all previous steps succeeded
         if: ${{ success() }}
@@ -77,3 +69,12 @@ jobs:
           GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
           GOOGLE_SHEET_NAME: ${{ secrets.GOOGLE_SHEET_NAME }}
         run: python scraper/common/exporters/google_sheets.py --no-dot-env ${{ env.SCRAPE_OUTPUT }}
+
+      - name: Archive scrape output and log
+        uses: actions/upload-artifact@v4
+        with:
+          name: scrape-output_${{ steps.generate-timestamp.outputs.TIMESTAMP}}
+          path: |
+            ${{ env.SCRAPE_OUTPUT }}
+            ${{ env.CLASSIFY_OUTPUT }}
+            ${{ github.workspace }}/${{ env.SCRAPE_DIR }}/log.txt
