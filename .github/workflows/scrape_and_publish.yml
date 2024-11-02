@@ -68,7 +68,7 @@ jobs:
           GOOGLE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
           GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
           GOOGLE_SHEET_NAME: ${{ secrets.GOOGLE_SHEET_NAME }}
-        run: python scraper/common/exporters/google_sheets.py --no-dot-env ${{ env.SCRAPE_OUTPUT }}
+        run: python scraper/common/exporters/google_sheets.py --no-dot-env ${{ env.CLASSIFY_OUTPUT }}
 
       - name: Archive scrape output and log
         uses: actions/upload-artifact@v4
