@@ -53,6 +53,14 @@ def main() -> None:
         """,
     )
     parser.add_argument(
+        "--sources",
+        nargs="+",
+        help="""
+            List of URLs to scrape, separated by whitespace, instead of those in
+            sources.py.
+        """,
+    )
+    parser.add_argument(
         "--no-dot-env",
         action="store_true",
         help="""
@@ -83,7 +91,7 @@ def main() -> None:
         prompt=EVENT_PROMPT_OVERVIEW,
         response_format=EventList,
     )
-    events = fetch_events(api, EVENT_SOURCES)
+    events = fetch_events(api, args.sources or EVENT_SOURCES)
     events = exclude_old_items(
         events,
         cutoff=args.after,
