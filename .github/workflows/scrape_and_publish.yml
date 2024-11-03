@@ -1,6 +1,13 @@
 name: Scrape and Publish
 on:
   workflow_dispatch:
+    inputs:
+      url_sources:
+        description: >-
+          List of URLs to scrape separated by spaces.
+          By default, use the list in sources.py.
+        type: string
+        required: false
 permissions:
   contents: read
 
@@ -47,7 +54,19 @@ jobs:
       - name: Clear existing output file
         run: rm -f ${{ env.SCRAPE_OUTPUT }}
 
-      - name: Run scraper
+      - name: Run scraper on user's sources
+        if: ${{ inputs.url_sources != ''  }}
+        working-directory: ${{ github.workspace }}/${{ env.SCRAPE_DIR }}
+        env:
+          INSTANT_API_KEY: ${{ secrets.INSTANT_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # GitHub recommends passing untrusted user input through an environment variable:
+          # https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
+          URL_SOURCES: ${{ inputs.url_sources }}
+        run: python -m scraper --no-dot-env ${{ env.SCRAPE_OUTPUT }} --sources "${URL_SOURCES}"
+
+      - name: Run scraper on default sources
+        if: ${{ inputs.url_sources == ''  }}
         working-directory: ${{ github.workspace }}/${{ env.SCRAPE_DIR }}
         env:
           INSTANT_API_KEY: ${{ secrets.INSTANT_API_KEY }}
