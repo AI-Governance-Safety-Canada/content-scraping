@@ -13,6 +13,7 @@ from scraper.common.writers.format_selector import SUPPORTED_FORMATS, write_item
 from scraper.events.event import EventList
 from scraper.events.pipeline import fetch_events
 from scraper.events.prompt import EVENT_PROMPT_OVERVIEW
+from scraper.events.sources import EVENT_SOURCES
 
 
 TODAY = datetime.date.today()
@@ -82,7 +83,7 @@ def main() -> None:
         prompt=EVENT_PROMPT_OVERVIEW,
         response_format=EventList,
     )
-    events = fetch_events(api)
+    events = fetch_events(api, EVENT_SOURCES)
     events = exclude_old_items(
         events,
         cutoff=args.after,

@@ -4,13 +4,15 @@ from typing import Iterable
 
 from scraper.common.api.interface import Api
 from .event import Event, EventList
-from .sources import EVENT_SOURCES
 from .parser import parse_full_response
 
 
-def fetch_events(api: Api[EventList]) -> Iterable[Event]:
+def fetch_events(
+    api: Api[EventList],
+    sources: Iterable[str],
+) -> Iterable[Event]:
     logger = logging.getLogger(__name__)
-    for source in EVENT_SOURCES:
+    for source in sources:
         logger.info("Scraping events from %s", source)
         response = api.scrape(source)
         if not response:
