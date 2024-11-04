@@ -21,7 +21,11 @@ def fetch_events(api: Api[EventList]) -> Iterable[Event]:
             scrape_datetime=datetime.now().astimezone(tz=None),
         ):
             logger.debug("Event: %r", event)
-            yield fetch_event_details(api, event)
+            event = fetch_event_details(api, event)
+            if event.title:
+                yield event
+            else:
+                logging.debug("Dropping event due to missing title")
 
 
 def fetch_event_details(api: Api[EventList], event: Event) -> Event:
