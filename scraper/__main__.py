@@ -9,6 +9,7 @@ import dotenv
 from scraper.common.api.openai import OpenAIApi
 from scraper.common.filters.date_and_time import exclude_old_items
 from scraper.common.logs.config import configure_logging, set_log_level
+from scraper.common.parsers.url import parse_url_list
 from scraper.common.writers.format_selector import SUPPORTED_FORMATS, write_items
 from scraper.events.event import EventList
 from scraper.events.pipeline import fetch_events
@@ -91,7 +92,8 @@ def main() -> None:
         prompt=EVENT_PROMPT_OVERVIEW,
         response_format=EventList,
     )
-    events = fetch_events(api, args.sources or EVENT_SOURCES)
+    event_sources = parse_url_list(args.sources or EVENT_SOURCES)
+    events = fetch_events(api, event_sources)
     events = exclude_old_items(
         events,
         cutoff=args.after,
