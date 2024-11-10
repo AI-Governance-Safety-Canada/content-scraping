@@ -31,14 +31,15 @@ Install the Python dependencies by running
 pip install -r requirements.txt
 ```
 
-#### InstantAPI
+#### OpenAI API
 
-This project uses [InstantAPI](https://instantapi.ai) for AI-powered web
-scraping.
+This project uses [OpenAI's API](https://platform.openai.com/docs/overview) for
+AI-powered web scraping.
 
-1.  Get an API key from https://instantapi.ai/docs/get-started/.
+1.  Create an OpenAI account and
+    [API key](https://platform.openai.com/api-keys).
 1.  Save the API key to the `.env` file you created above next to
-    `INSTANT_API_KEY`.
+    `OPENAI_API_KEY`.
 
 #### Google Sheets
 
@@ -115,3 +116,22 @@ python -m scraper.common.exporters.google_sheets --help
 
 The script will append new rows to the bottom of the sheet. It checks the rows
 already in the sheet to avoid duplicates.
+
+#### Running via GitHub
+
+There is a GitHub Actions workflow which can run the scraper and publish the
+results to a predefined Google spreadsheet. If you have the required
+permissions, you can follow these steps to trigger it without needing to do any
+of the setup above.
+
+1.  Navigate to the
+    [Scrape and Publish workflow](https://github.com/AI-Governance-Safety-Canada/content-scraping/actions/workflows/scrape_and_publish.yml).
+1.  Click the "Run workflow" button near the top right. If you don't see the
+    button, you don't have the necessary permissions.
+1.  Leave the branch set to `main`.
+1.  If desired, override the URLs to scrape by entering them into the input box,
+    separating them with spaces. If you leave this blank, the scraper will use
+    the URLs defined in [`sources.py`](/scraper/events/sources.py).
+1.  Click "Run workflow".
+1.  Refresh the page to see the active workflow you just started. You can click
+    on it to monitor its progress.
