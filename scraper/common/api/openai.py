@@ -6,7 +6,7 @@ import openai
 from scraper.common.text_processors.html import clean_content
 
 from .interface import Api, ApiResponse, RichResponse
-from .http import get
+from .http import get, HTTP_GET_HEADERS
 
 
 class OpenAIApi(Api[RichResponse]):
@@ -27,7 +27,7 @@ class OpenAIApi(Api[RichResponse]):
         logger = logging.getLogger(__name__)
         # We need to make two requests: first we fetch the page we want to scrape. Then
         # we submit its contents to the API for parsing.
-        response = get(url)
+        response = get(url, headers=HTTP_GET_HEADERS)
         if not response:
             return None
         # Remove irrelevant portions to reduce token count
