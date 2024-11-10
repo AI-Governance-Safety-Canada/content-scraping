@@ -9,3 +9,7 @@ class TestPrompt(unittest.TestCase):
         self.assertFalse(EVENT_PROMPT_OVERVIEW[-1].isspace())
         self.assertNotIn("\n", EVENT_PROMPT_OVERVIEW)
         self.assertNotIn("  ", EVENT_PROMPT_OVERVIEW)
+
+
+if __name__ == "__main__":
+    unittest.main()

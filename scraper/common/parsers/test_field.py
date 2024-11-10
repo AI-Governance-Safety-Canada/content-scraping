@@ -28,3 +28,7 @@ class TestFetchField(unittest.TestCase):
     def test_wrong_type(self) -> None:
         wrong_type = fetch_field_with_type(EXAMPLE, "age", str)
         self.assertIsNone(wrong_type)
+
+
+if __name__ == "__main__":
+    unittest.main()
