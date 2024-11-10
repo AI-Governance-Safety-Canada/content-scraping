@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 import datetime
-import os
 from pathlib import Path
 
 import dotenv
@@ -80,12 +79,6 @@ def main() -> None:
                 "No .env file found. Please copy and modify .env.example following the "
                 "instructions in README.md."
             )
-    api_key = os.getenv("INSTANT_API_KEY")
-    if not api_key:
-        raise ValueError(
-            "API key not found in .env file. "
-            "Please see .env.example for the expected format."
-        )
 
     api = OpenAIApi[EventList](
         model="gpt-4o-mini",
