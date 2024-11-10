@@ -15,6 +15,7 @@ from scraper.events.pipeline import fetch_events
 from scraper.events.prompt import EVENT_PROMPT_OVERVIEW
 
 
+TODAY = datetime.date.today()
 # Datetime which is earlier than any legitimate ones we expect to encounter
 EPOCH_START = datetime.date.fromtimestamp(0)
 
@@ -42,9 +43,8 @@ def main() -> None:
         nargs="?",
         # If option is not specified, use a very old cutoff to include all events
         default=EPOCH_START,
-        # If option is specified but no cutoff date is given, use None, which will be
-        # replaced with the current date.
-        const=None,
+        # If option is specified but no cutoff date is given, use today's date
+        const=TODAY,
         help="""
             Only include events after this date. If this option is specified without a
             value, use the current date as the cutoff. If this option is not specified,

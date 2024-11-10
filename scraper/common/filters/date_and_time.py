@@ -6,7 +6,7 @@ T = TypeVar("T")
 
 def exclude_old_items(
     items: Iterable[T],
-    cutoff: Optional[date] = None,
+    cutoff: date = date.today(),
     *,
     key: Optional[Callable[[T], date]] = None,
     attribute: Optional[str] = None,
@@ -21,10 +21,6 @@ def exclude_old_items(
     """
     if (key, attribute).count(None) != 1:
         raise TypeError("Must specify one of key and attribute")
-
-    if cutoff is None:
-        # Use current local time
-        cutoff = date.today()
 
     if key is None:
         # The above check should guarantee that attribute is not None here.
