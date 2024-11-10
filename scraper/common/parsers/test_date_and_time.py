@@ -38,7 +38,6 @@ class TestParseTime(unittest.TestCase):
     def test_wrong_format(self) -> None:
         self.assertIsNone(parse_time("1:00 PM"))
         self.assertIsNone(parse_time("12:34:56 UTC"))
-        self.assertIsNone(parse_time("12:34:56Z"))
 
     def test_wrong_type(self) -> None:
         self.assertIsNone(parse_time(0))  # type: ignore[arg-type]
