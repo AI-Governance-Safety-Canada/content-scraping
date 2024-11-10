@@ -49,8 +49,12 @@ def fetch_event_details(api: Api[EventList], event: Event) -> Event:
     )
     for detail in additional_details:
         logger.debug("Event details: %r", event)
-        # Prefer info from the event's own page
-        event = detail.merge(event)
+        # For most fields, prefer info from the event's own page
+        detail.merge(event)
+        # However, prefer the URL we scraped from the upstream page (which is often the
+        # URL of the event's detail page that we just scraped).
+        detail.url = event.url or detail.url
+        event = detail
         # Only use the first event found on the details page
         break
 
