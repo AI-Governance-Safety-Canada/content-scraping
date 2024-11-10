@@ -41,6 +41,10 @@ AI-powered web scraping.
 1.  Save the API key to the `.env` file you created above next to
     `OPENAI_API_KEY`.
 
+Note that OpenAI imposes
+[rate limits](https://platform.openai.com/docs/guides/rate-limits/usage-tiers)
+on newly-created accounts.
+
 #### Google Sheets
 
 These steps are required if you want to publish the results to a Google
