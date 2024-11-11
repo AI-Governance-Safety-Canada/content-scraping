@@ -45,7 +45,7 @@ class Event(NullStringValidator):
         description="A short description of the event in one to three sentences. If no description is present, this field is null.",
     )
     url: Optional[str] = Field(
-        description="The full URL for the event. If no URL is present, this field is null.",
+        description="The URL for the event. If no URL is present, this field is null. If the hostname is not present, this will only contain the path and subsequent components.",
     )
     virtual: Optional[bool] = Field(
         description="True if attendees can join the event virtually (event is online-only or hybrid). If not known, this field is null.",
