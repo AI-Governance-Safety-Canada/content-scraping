@@ -91,6 +91,12 @@ class TestEvent(unittest.TestCase):
             datetime(2010, 3, 21, 1, 23, 45, tzinfo=UTC),
         )
 
+    def test_description_normalization(self) -> None:
+        event = TestEvent.create_example_event(
+            description=" A\nmulti-line\ndescription.\n",
+        )
+        self.assertEqual(event.description, "A multi-line description.")
+
     def test_from_json(self) -> None:
         event_json = """
         {

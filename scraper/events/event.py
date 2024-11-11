@@ -7,6 +7,7 @@ from pydantic import (
     ConfigDict,
     Field,
     field_serializer,
+    field_validator,
     SerializationInfo,
 )
 from pydantic.json_schema import SkipJsonSchema
@@ -77,6 +78,13 @@ class Event(NullStringValidator):
     # they may be supplied after the Event is created.
     scrape_source: SkipJsonSchema[Optional[str]] = None
     scrape_datetime: SkipJsonSchema[Optional[datetime]] = None
+
+    @field_validator("description")
+    @classmethod
+    def validate_description(cls, description: Optional[str]) -> Optional[str]:
+        if description is None:
+            return None
+        return description.strip().replace("\n", " ")
 
     @field_serializer("scrape_datetime", check_fields=True)
     def serialize_scrape_datetime(
