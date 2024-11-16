@@ -8,6 +8,9 @@ on:
           By default, use the list in sources.py.
         type: string
         required: false
+  schedule:
+    # Run at 00:47 UTC every Sunday
+    - cron: '47 0 * * SUN'
 permissions:
   contents: read
 
