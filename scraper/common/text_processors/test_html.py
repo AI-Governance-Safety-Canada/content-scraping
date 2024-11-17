@@ -197,6 +197,32 @@ class TestCleanContent(unittest.TestCase):
         result = clean_content(html)
         self.compare_html(expected, result)
 
+    def test_json_script(self) -> None:
+        html = """
+        <html>
+            <head>
+                <title>Test</title>
+            </head>
+            <body>
+                <h1>Title</h1>
+                <script type="application/json">{"key": "value"}</script>
+                <p>Lorem ipsum</p>
+                <script>console.log('foo');</script>
+                <p>dolor sit amet</p>
+            </body>
+        </html>
+        """
+        expected = """
+        <body>
+            <h1>Title</h1>
+            <script type="application/json">{"key": "value"}</script>
+            <p>Lorem ipsum</p>
+            <p>dolor sit amet</p>
+        </body>
+        """
+        result = clean_content(html)
+        self.compare_html(expected, result)
+
 
 if __name__ == "__main__":
     unittest.main()
