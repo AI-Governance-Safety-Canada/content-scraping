@@ -56,8 +56,13 @@ def clean_content(content: str) -> Optional[str]:
         logger.warning("Content does not contain body element")
         return None
 
+    for script in body.find_all("script"):
+        if script.attrs.get("type") == "application/json":
+            # Keep this element since it may contain useful info
+            continue
+        script.decompose()
+
     for tag_to_delete in (
-        "script",
         "style",
         "header",
         "footer",
