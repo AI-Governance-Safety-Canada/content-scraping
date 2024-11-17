@@ -80,7 +80,7 @@ store the results locally for now.
 1.  Paste the ID into your `.env` file next to `GOOGLE_SPREADSHEET_ID`.
 1.  Copy the name of the sheet (tab) where you want the results published. By
     default, it will have the name `Sheet1`.
-1.  Paste the sheet name into your `.env.` file next to `GOOGLE_SHEET_NAME`.
+1.  Paste the sheet name into your `.env` file next to `GOOGLE_SHEET_NAME`.
 
 ### Running
 
@@ -121,21 +121,8 @@ python -m scraper.common.exporters.google_sheets --help
 The script will append new rows to the bottom of the sheet. It checks the rows
 already in the sheet to avoid duplicates.
 
-#### Running via GitHub
+### Maintenance
 
-There is a GitHub Actions workflow which can run the scraper and publish the
-results to a predefined Google spreadsheet. If you have the required
-permissions, you can follow these steps to trigger it without needing to do any
-of the setup above.
-
-1.  Navigate to the
-    [Scrape and Publish workflow](https://github.com/AI-Governance-Safety-Canada/content-scraping/actions/workflows/scrape_and_publish.yml).
-1.  Click the "Run workflow" button near the top right. If you don't see the
-    button, you don't have the necessary permissions.
-1.  Leave the branch set to `main`.
-1.  If desired, override the URLs to scrape by entering them into the input box,
-    separating them with spaces. If you leave this blank, the scraper will use
-    the URLs defined in [`sources.py`](/scraper/events/sources.py).
-1.  Click "Run workflow".
-1.  Refresh the page to see the active workflow you just started. You can click
-    on it to monitor its progress.
+See [here](/maintenance.md) for maintenance information about this repository,
+including the GitHub Actions workflow which can automatically run the steps
+above.
