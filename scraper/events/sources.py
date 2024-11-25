@@ -3,7 +3,6 @@ EVENT_SOURCES = (
     "https://amii.ca/events/",
     "https://askai.org/events",
     "https://caida.ubc.ca/events",
-    "https://canadianigf.ca/event-details/",
     "https://canadianlabour.ca/events/",
     "https://canadianregtech.ca/our-events",
     "https://care-ai.ca/events-2/",
