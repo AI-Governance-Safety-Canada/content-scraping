@@ -77,18 +77,21 @@ def deduplicate(
 ) -> Iterable[List[Any]]:
     logger = logging.getLogger(__name__)
 
-    def row_to_key(row: List[Any]) -> Tuple[Any, ...]:
-        return tuple(row[col] for col in columns_to_use)
+    def is_substring(field_a: str, field_b: str) -> bool:
+        return (
+            field_a.lower() in field_b.lower()
+            or field_b.lower() in field_a.lower()
+        )
 
-    row_set = set(row_to_key(row) for row in existing_rows)
+    seen_rows = list(existing_rows)
     for new_row in new_rows:
-        key = row_to_key(new_row)
-        if key in row_set:
-            # We've seen this row before. Skip it.
-            logger.debug("Skipping duplicate row: %s", key)
-            continue
-        row_set.add(key)
-        yield new_row
+        for seen_row in seen_rows:
+            if all(is_substring(new_row[col], seen_row[col]) for col in columns_to_use):
+                logger.debug("Skipping duplicate row: %s", new_row)
+                continue
+        else:
+            seen_rows.append(new_row)
+            yield new_row
 
 
 def append_rows(
