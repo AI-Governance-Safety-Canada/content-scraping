@@ -57,16 +57,19 @@ def clean_content(content: str) -> Optional[str]:
         return None
 
     for script in body.find_all("script"):
-        if script.attrs.get("type") == "application/json":
-            # Keep this element since it may contain useful info
+        if script.attrs.get("type") != "application/json":
+            script.decompose()
             continue
-        script.decompose()
+        script_id = script.attrs.get("id")
+        if isinstance(script_id, str) and script_id.startswith("wix"):
+            script.decompose()
 
     for tag_to_delete in (
-        "style",
-        "header",
         "footer",
         "form",
+        "header",
+        "link",
+        "style",
         "svg",
     ):
         for element in body.find_all(tag_to_delete):
