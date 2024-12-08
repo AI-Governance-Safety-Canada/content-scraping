@@ -51,13 +51,13 @@ class Event(NullStringValidator):
         description="True if attendees can join the event virtually (event is online-only or hybrid). If not known, this field is null.",
     )
     location_country: Optional[str] = Field(
-        description="The country the event is located in, if known. For for in-person or hybrid events without a listed location, this field is null. For online-only events, this is set to 'online'.",
+        description="The country the event is located in, if known. Use the full name without abbreviations, e.g. Canada, United States or United Kingdom. For for in-person or hybrid events without a listed location, this field is null. For online-only events, this is set to 'online'.",
     )
     location_region: Optional[str] = Field(
-        description="The region (state, province, etc.) the event is located in, if known. For for in-person or hybrid events without a listed location, this field is null. For online-only events, this is set to 'online'.",
+        description="The region (state, province, etc.) the event is located in, if known. Use the full name without abbreviations, e.g. British Columbia or New York. For for in-person or hybrid events without a listed location, this field is null. For online-only events, this is set to 'online'.",
     )
     location_city: Optional[str] = Field(
-        description="The city the event is located in, if known. For for in-person or hybrid events without a listed location, this field is null. For online-only events, this is set to 'online'.",
+        description="The city the event is located in, if known. Use the full name without abbreviations, e.g. Québec or New York. For for in-person or hybrid events without a listed location, this field is null. For online-only events, this is set to 'online'.",
     )
 
     # These fields are not scraped but are used later in the pipeline
