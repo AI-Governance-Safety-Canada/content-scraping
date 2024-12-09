@@ -88,7 +88,7 @@ def deduplicate(
         for seen_row in seen_rows:
             if all(is_substring(new_row[col], seen_row[col]) for col in columns_to_use):
                 logger.debug("Skipping duplicate row: %s", new_row)
-                continue
+                break
         else:
             seen_rows.append(new_row)
             yield new_row
