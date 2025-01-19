@@ -41,12 +41,13 @@ def clean_content(content: str) -> Optional[str]:
 
     1. Select the <body> element.
     2. Remove all of the following elements:
-        <script>
-        <style>
-        <header>
         <footer>
         <form>
+        <header>
+        <link>
+        <style>
         <svg>
+    3. Remove script elements which don't contain useful info
     """
     logger = logging.getLogger(__name__)
     soup = BeautifulSoup(content, "html.parser")
@@ -61,6 +62,7 @@ def clean_content(content: str) -> Optional[str]:
             script.decompose()
             continue
         script_id = script.attrs.get("id")
+        # Wix sites sometimes include long, irrelevant script elements
         if isinstance(script_id, str) and script_id.startswith("wix"):
             script.decompose()
 
