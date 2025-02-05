@@ -47,8 +47,8 @@ def check_response(response: requests.Response) -> Optional[requests.Response]:
         "Request returned response status %d: %s - %s",
         response.status_code,
         response.reason,
-        response.text,
     )
+    logger.debug("Response text: %s", response.text)
 
     if response.text.startswith("Your subscription is currently inactive"):
         logger.error("API returned error. Check that the API key is valid.")
