@@ -79,9 +79,24 @@ def request_with_retries(
     return check_response(requests.request(method, url, **kwargs))
 
 
+def request_and_catch(
+    method: str,
+    url: str,
+    **kwargs: Any,
+) -> Optional[requests.Response]:
+    logger = logging.getLogger(__name__)
+    try:
+        return request_with_retries(method, url, **kwargs)
+    except HttpRetryableError as error:
+        logger.warning("Retries exceeded for %s", url)
+        logger.warning("Last error: %r", error)
+        # Return None so that we continue to the next request
+    return None
+
+
 def get(url: str, **kwargs: Any) -> Optional[requests.Response]:
-    return request_with_retries("GET", url, **kwargs)
+    return request_and_catch("GET", url, **kwargs)
 
 
 def post(url: str, **kwargs: Any) -> Optional[requests.Response]:
-    return request_with_retries("POST", url, **kwargs)
+    return request_and_catch("POST", url, **kwargs)
