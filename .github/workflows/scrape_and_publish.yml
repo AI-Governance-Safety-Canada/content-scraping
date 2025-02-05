@@ -93,6 +93,8 @@ jobs:
         run: python scraper/common/exporters/google_sheets.py --no-dot-env ${{ env.CLASSIFY_OUTPUT }}
 
       - name: Archive scrape output and log
+        # Always run, even if previous steps fail
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: scrape-output_${{ steps.generate-timestamp.outputs.TIMESTAMP}}
