@@ -60,15 +60,7 @@ class Event(NullStringValidator):
         description="The city the event is located in, if known. Use the full name without abbreviations, e.g. Québec or New York. For for in-person or hybrid events without a listed location, this field is null. For online-only events, this is set to 'online'.",
     )
 
-    # These fields are not scraped but are used later in the pipeline
-    accessible_to_canadians: SkipJsonSchema[Optional[float]] = Field(
-        init=False,
-        default=None,
-    )
-    open_to_public: SkipJsonSchema[Optional[float]] = Field(
-        init=False,
-        default=None,
-    )
+    # This field is not scraped but is used later in the pipeline
     approved: SkipJsonSchema[Approved] = Field(
         init=False,
         default=Approved.PENDING,
