@@ -44,7 +44,7 @@ def check_response(response: requests.Response) -> Optional[requests.Response]:
 
     logger = logging.getLogger(__name__)
     logger.warning(
-        "Request returned response status %d: %s - %s",
+        "Request returned response status %d: %s",
         response.status_code,
         response.reason,
     )
