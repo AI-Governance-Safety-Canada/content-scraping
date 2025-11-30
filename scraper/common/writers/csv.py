@@ -19,9 +19,8 @@ def write_to_csv(
     except StopIteration:
         # Iterable is empty, so there's nothing to save
         return
-    fields = (
-        tuple(type(item).model_fields.keys())
-        + tuple(type(item).model_computed_fields.keys())
+    fields = tuple(type(item).model_fields.keys()) + tuple(
+        type(item).model_computed_fields.keys()
     )
 
     with open(output_path, "a", encoding="utf-8") as out:

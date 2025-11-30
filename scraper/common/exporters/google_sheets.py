@@ -78,10 +78,7 @@ def deduplicate(
     logger = logging.getLogger(__name__)
 
     def is_substring(field_a: str, field_b: str) -> bool:
-        return (
-            field_a.lower() in field_b.lower()
-            or field_b.lower() in field_a.lower()
-        )
+        return field_a.lower() in field_b.lower() or field_b.lower() in field_a.lower()
 
     seen_rows = list(existing_rows)
     for new_row in new_rows:
