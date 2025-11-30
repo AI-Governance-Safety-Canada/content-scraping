@@ -91,6 +91,9 @@ def request_and_catch(
         logger.warning("Retries exceeded for %s", url)
         logger.warning("Last error: %r", error)
         # Return None so that we continue to the next request
+    except requests.ConnectionError as error:
+        logger.warning("Connection error for %s: %r", url, error)
+        # Return None so that we continue to the next request
     return None
 
 

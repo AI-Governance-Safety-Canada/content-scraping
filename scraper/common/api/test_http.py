@@ -1,8 +1,9 @@
 import unittest
+from unittest.mock import patch
 
 import requests
 
-from .http import check_response, HttpRetryableError, HttpFatalError
+from .http import check_response, request_and_catch, HttpRetryableError, HttpFatalError
 
 
 def create_response(
@@ -46,6 +47,41 @@ class TestCheckResponse(unittest.TestCase):
         """Should return None for non-retryable errors"""
         response = create_response(400)
         self.assertIsNone(check_response(response))
+
+
+class TestRequestAndCatch(unittest.TestCase):
+    def test_request_and_catch_success(self) -> None:
+        """Should return response when request is successful"""
+        response = create_response(200)
+        with patch("request_with_retries", return_value=response):
+            result = request_and_catch("GET", "https://example.com"), response
+        self.assertEqual(result, response)
+
+    def test_request_and_catch_retryable_error(self) -> None:
+        """Should return None when a retryable error is encountered"""
+        response = create_response(408)
+        with patch("request_with_retries", return_value=response):
+            result = request_and_catch("GET", "https://example.com")
+        self.assertIsNone(result)
+
+    def test_request_and_catch_api_error(self) -> None:
+        """Should return None when an API error is encountered"""
+        response = create_response(
+            403,
+            text="Your subscription is currently inactive",
+        )
+        with patch("request_with_retries", return_value=response):
+            result = request_and_catch("GET", "https://example.com")
+        self.assertIsNone(result)
+
+    def test_request_and_catch_connection_error(self) -> None:
+        """Should return None when a connection error is encountered"""
+        with patch(
+            "request_with_retries",
+            side_effect=requests.ConnectionError("Connection error"),
+        ):
+            result = request_and_catch("GET", "https://example.com")
+        self.assertIsNone(result)
 
 
 if __name__ == "__main__":
