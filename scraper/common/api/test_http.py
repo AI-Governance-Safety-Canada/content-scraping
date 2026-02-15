@@ -53,14 +53,20 @@ class TestRequestAndCatch(unittest.TestCase):
     def test_request_and_catch_success(self) -> None:
         """Should return response when request is successful"""
         response = create_response(200)
-        with patch("request_with_retries", return_value=response):
+        with patch(
+            "scraper.common.api.http.request_with_retries",
+            return_value=response,
+        ):
             result = request_and_catch("GET", "https://example.com"), response
         self.assertEqual(result, response)
 
     def test_request_and_catch_retryable_error(self) -> None:
         """Should return None when a retryable error is encountered"""
         response = create_response(408)
-        with patch("request_with_retries", return_value=response):
+        with patch(
+            "scraper.common.api.http.request_with_retries",
+            return_value=response,
+        ):
             result = request_and_catch("GET", "https://example.com")
         self.assertIsNone(result)
 
@@ -70,14 +76,17 @@ class TestRequestAndCatch(unittest.TestCase):
             403,
             text="Your subscription is currently inactive",
         )
-        with patch("request_with_retries", return_value=response):
+        with patch(
+            "scraper.common.api.http.request_with_retries",
+            return_value=response,
+        ):
             result = request_and_catch("GET", "https://example.com")
         self.assertIsNone(result)
 
     def test_request_and_catch_connection_error(self) -> None:
         """Should return None when a connection error is encountered"""
         with patch(
-            "request_with_retries",
+            "scraper.common.api.http.request_with_retries",
             side_effect=requests.ConnectionError("Connection error"),
         ):
             result = request_and_catch("GET", "https://example.com")
