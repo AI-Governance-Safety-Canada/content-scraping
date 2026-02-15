@@ -3,7 +3,13 @@ from unittest.mock import patch
 
 import requests
 
-from .http import check_response, request_and_catch, HttpRetryableError, HttpFatalError
+from .http import (
+    check_response,
+    request_and_catch,
+    HttpRetryableError,
+    HttpFatalError,
+    RETRYABLE_ERRORS,
+)
 
 
 def create_response(
@@ -57,40 +63,28 @@ class TestRequestAndCatch(unittest.TestCase):
             "scraper.common.api.http.request_with_retries",
             return_value=response,
         ):
-            result = request_and_catch("GET", "https://example.com"), response
+            result = request_and_catch("GET", "https://example.com")
         self.assertEqual(result, response)
 
     def test_request_and_catch_retryable_error(self) -> None:
         """Should return None when a retryable error is encountered"""
-        response = create_response(408)
-        with patch(
-            "scraper.common.api.http.request_with_retries",
-            return_value=response,
-        ):
-            result = request_and_catch("GET", "https://example.com")
-        self.assertIsNone(result)
+        for exception_cls in RETRYABLE_ERRORS:
+            with self.subTest(exception_cls=exception_cls), patch(
+                "scraper.common.api.http.request_with_retries",
+                side_effect=exception_cls("Retryable error"),
+            ):
+                result = request_and_catch("GET", "https://example.com")
+            self.assertIsNone(result)
 
-    def test_request_and_catch_api_error(self) -> None:
-        """Should return None when an API error is encountered"""
-        response = create_response(
-            403,
-            text="Your subscription is currently inactive",
-        )
-        with patch(
-            "scraper.common.api.http.request_with_retries",
-            return_value=response,
-        ):
-            result = request_and_catch("GET", "https://example.com")
-        self.assertIsNone(result)
-
-    def test_request_and_catch_connection_error(self) -> None:
-        """Should return None when a connection error is encountered"""
-        with patch(
-            "scraper.common.api.http.request_with_retries",
-            side_effect=requests.ConnectionError("Connection error"),
-        ):
-            result = request_and_catch("GET", "https://example.com")
-        self.assertIsNone(result)
+    def test_request_and_catch_fatal_error(self) -> None:
+        """Should not catch fatal or unexpected errors"""
+        for exception_cls in (HttpFatalError, RuntimeError):
+            with self.subTest(exception_cls=exception_cls), patch(
+                "scraper.common.api.http.request_with_retries",
+                side_effect=exception_cls("Fatal error"),
+            ):
+                with self.assertRaises(exception_cls):
+                    request_and_catch("GET", "https://example.com")
 
 
 if __name__ == "__main__":
