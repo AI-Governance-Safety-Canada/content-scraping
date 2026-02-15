@@ -62,6 +62,14 @@ def main() -> None:
         """,
     )
     parser.add_argument(
+        "--workers",
+        type=int,
+        default=3,
+        help="""
+            Number of parallel workers to use for fetching events.
+        """,
+    )
+    parser.add_argument(
         "--no-dot-env",
         action="store_true",
         help="""
@@ -89,7 +97,7 @@ def main() -> None:
             response_format=EventList,
         )
         event_sources = parse_url_list(args.sources or EVENT_SOURCES)
-        events = fetch_events(api, event_sources)
+        events = fetch_events(api=api, sources=event_sources, workers=args.workers)
         events = exclude_old_items(
             events,
             cutoff=args.after,

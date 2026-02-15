@@ -1,4 +1,5 @@
 import logging
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from datetime import datetime
 from typing import Iterable
 
@@ -10,24 +11,45 @@ from .parser import parse_full_response
 def fetch_events(
     api: Api[EventList],
     sources: Iterable[str],
+    workers: int,
 ) -> Iterable[Event]:
     logger = logging.getLogger(__name__)
-    for source in sources:
-        logger.info("Scraping events from %s", source)
-        response = api.scrape(source)
-        if not response:
-            continue
-        for event in parse_full_response(
-            response=response,
-            scrape_source=source,
-            scrape_datetime=datetime.now().astimezone(tz=None),
-        ):
-            logger.debug("Event: %r", event)
-            event = fetch_event_details(api, event)
-            if event.title:
+    logger.info(
+        "Fetching events from %d sources with %d parallel workers",
+        len(sources),
+        workers,
+    )
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        futures: list[Future[Iterable[Event]]] = []
+        for source in sources:
+            fut = executor.submit(fetch_events_from_source, api, source)
+            futures.append(fut)
+        for fut in as_completed(futures):
+            for event in fut.result():
                 yield event
-            else:
-                logging.debug("Dropping event due to missing title")
+
+
+def fetch_events_from_source(api: Api[EventList], source: str) -> Iterable[Event]:
+    logger = logging.getLogger(__name__)
+    logger.info("Scraping events from %s", source)
+    response = api.scrape(source)
+    if not response:
+        logger.info("No response from %s", source)
+        return
+    event_count = 0
+    for event in parse_full_response(
+        response=response,
+        scrape_source=source,
+        scrape_datetime=datetime.now().astimezone(tz=None),
+    ):
+        logger.debug("Event: %r", event)
+        event = fetch_event_details(api, event)
+        if event.title:
+            event_count += 1
+            yield event
+        else:
+            logging.debug("Dropping event due to missing title")
+    logger.info("Found %d events from %s", event_count, source)
 
 
 def fetch_event_details(api: Api[EventList], event: Event) -> Event:
