@@ -38,3 +38,16 @@ As an alterantive to the schedule, the workflow can be triggered manually.
 1.  Click "Run workflow".
 1.  Refresh the page to see the active workflow you just started. You can click
     on it to monitor its progress.
+
+## Developer Notes
+
+Here are the recommended checks to run when making changes to the code.
+
+```bash
+# Format
+black scraper/
+# Type checks
+mypy --strict scraper/
+# Run tests
+python -m unittest
+```
