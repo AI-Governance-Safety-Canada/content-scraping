@@ -38,6 +38,14 @@ class HttpFatalError(Exception):
     pass
 
 
+RETRYABLE_ERRORS = (
+    HttpRetryableError,
+    requests.ConnectionError,
+    requests.Timeout,
+    TimeoutError,
+)
+
+
 def check_response(response: requests.Response) -> Optional[requests.Response]:
     if response.ok:
         return response
@@ -63,7 +71,7 @@ def check_response(response: requests.Response) -> Optional[requests.Response]:
 
 
 @retry(
-    retry=retry_if_exception_type((HttpRetryableError,)),
+    retry=retry_if_exception_type(RETRYABLE_ERRORS),
     stop=stop_after_attempt(3),
     # SquareSpace has a 1 minute cooldown if the rate limit is exceeded:
     # https://developers.squarespace.com/commerce-apis/rate-limits
@@ -87,12 +95,9 @@ def request_and_catch(
     logger = logging.getLogger(__name__)
     try:
         return request_with_retries(method, url, **kwargs)
-    except HttpRetryableError as error:
+    except RETRYABLE_ERRORS as error:
         logger.warning("Retries exceeded for %s", url)
         logger.warning("Last error: %r", error)
-        # Return None so that we continue to the next request
-    except requests.ConnectionError as error:
-        logger.warning("Connection error for %s: %r", url, error)
         # Return None so that we continue to the next request
     return None
 
