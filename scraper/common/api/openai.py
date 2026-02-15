@@ -51,6 +51,8 @@ class OpenAIApi(Api[RichResponse]):
                 ],
                 response_format=self.response_format,
             )
+        except openai.AuthenticationError:
+            raise
         except openai.OpenAIError as error:
             logger.error("Failed to scrape %s: %r", url, error)
             return None
