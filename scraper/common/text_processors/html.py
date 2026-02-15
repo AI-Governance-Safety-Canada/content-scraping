@@ -20,19 +20,13 @@ def convert_html_entities(data: T) -> T:
     if isinstance(data, str):
         return cast(T, html.unescape(data))
     elif isinstance(data, Sequence):
-        return cast(
-            T,
-            type(data)(
-                convert_html_entities(item) for item in data
-            ),  # type: ignore[call-arg]
-        )
+        return type(data)(
+            convert_html_entities(item) for item in data
+        )  # type: ignore[call-arg]
     elif isinstance(data, Mapping):
-        return cast(
-            T,
-            type(data)(
-                (key, convert_html_entities(value)) for key, value in data.items()
-            ),  # type: ignore[call-arg]
-        )
+        return type(data)(
+            (key, convert_html_entities(value)) for key, value in data.items()
+        )  # type: ignore[call-arg]
     return data
 
 

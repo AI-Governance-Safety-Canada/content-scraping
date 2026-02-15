@@ -1,7 +1,7 @@
 import logging
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from datetime import datetime
-from typing import Iterable
+from typing import Iterable, Sequence
 
 from scraper.common.api.interface import Api
 from .event import Event, EventList
@@ -10,7 +10,7 @@ from .parser import parse_full_response
 
 def fetch_events(
     api: Api[EventList],
-    sources: Iterable[str],
+    sources: Sequence[str],
     workers: int,
 ) -> Iterable[Event]:
     logger = logging.getLogger(__name__)
