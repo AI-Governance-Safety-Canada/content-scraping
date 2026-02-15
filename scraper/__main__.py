@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import datetime
+import logging
 from pathlib import Path
 
 import dotenv
@@ -72,30 +73,35 @@ def main() -> None:
 
     configure_logging()
     set_log_level()
+    logger = logging.getLogger(__name__)
 
-    if not args.no_dot_env:
-        if not dotenv.load_dotenv():
-            raise RuntimeError(
-                "No .env file found. Please copy and modify .env.example following the "
-                "instructions in README.md."
-            )
+    try:
+        if not args.no_dot_env:
+            if not dotenv.load_dotenv():
+                raise RuntimeError(
+                    "No .env file found. Please copy and modify .env.example following the "
+                    "instructions in README.md."
+                )
 
-    api = OpenAIApi[EventList](
-        model="gpt-4o-mini",
-        prompt=EVENT_PROMPT_OVERVIEW,
-        response_format=EventList,
-    )
-    event_sources = parse_url_list(args.sources or EVENT_SOURCES)
-    events = fetch_events(api, event_sources)
-    events = exclude_old_items(
-        events,
-        cutoff=args.after,
-        key=lambda event: event.start.date or EPOCH_START,
-    )
-    write_items(
-        items=events,
-        output_path=args.output_path,
-    )
+        api = OpenAIApi[EventList](
+            model="gpt-4o-mini",
+            prompt=EVENT_PROMPT_OVERVIEW,
+            response_format=EventList,
+        )
+        event_sources = parse_url_list(args.sources or EVENT_SOURCES)
+        events = fetch_events(api, event_sources)
+        events = exclude_old_items(
+            events,
+            cutoff=args.after,
+            key=lambda event: event.start.date or EPOCH_START,
+        )
+        write_items(
+            items=events,
+            output_path=args.output_path,
+        )
+    except Exception as e:
+        logger.exception("Unhandled exception: %r", e)
+        raise
 
 
 if __name__ == "__main__":
