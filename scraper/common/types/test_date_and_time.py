@@ -1,3 +1,4 @@
+import datetime
 import unittest
 
 from .date_and_time import DateAndTime
@@ -93,6 +94,39 @@ class TestDateAndTime(unittest.TestCase):
             utc_offset_minute=55,
         )
         self.assertEqual(dat.model_dump(), "2000-01-23T12:34:56-10:05")
+
+    def test_invalid_date(self) -> None:
+        dat = DateAndTime(
+            year=2023,
+            month=2,
+            day=31,
+            hour=None,
+            minute=None,
+            second=None,
+            utc_offset_hour=None,
+            utc_offset_minute=None,
+        )
+        self.assertIsNone(dat.year)
+        self.assertIsNone(dat.month)
+        self.assertIsNone(dat.day)
+        self.assertIsNone(dat.date)
+
+    def test_invalid_time(self) -> None:
+        dat = DateAndTime(
+            year=2023,
+            month=1,
+            day=15,
+            hour=25,
+            minute=0,
+            second=0,
+            utc_offset_hour=None,
+            utc_offset_minute=None,
+        )
+        self.assertIsNone(dat.hour)
+        self.assertIsNone(dat.minute)
+        self.assertIsNone(dat.second)
+        self.assertIsNone(dat.time)
+        self.assertEqual(dat.date, datetime.date(2023, 1, 15))
 
     def test_json_schema(self) -> None:
         schema = DateAndTime.model_json_schema()
