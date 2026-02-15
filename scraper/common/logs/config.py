@@ -28,6 +28,7 @@ def set_log_level(
     logger_names: Iterable[str] = (
         "httpcore",
         "httpx",
+        "openai",
         "urllib3",
     ),
 ) -> None:
