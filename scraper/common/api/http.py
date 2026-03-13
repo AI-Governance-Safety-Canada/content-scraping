@@ -11,7 +11,6 @@ from tenacity import (
     wait_fixed,
 )
 
-
 # HTTP headers to use when fetching web pages. Some sites block the default requests
 # user agent, even though their robots.txt allows scraping.
 HTTP_GET_HEADERS = {

@@ -4,7 +4,6 @@ from typing import Any, Iterable
 from .csv import write_to_csv
 from .jsonl import write_to_jsonl
 
-
 SUPPORTED_FORMATS = {
     ".csv": write_to_csv,
     ".jsonl": write_to_jsonl,

@@ -5,7 +5,6 @@ from typing import cast, Optional, TypeVar
 
 from bs4 import BeautifulSoup
 
-
 T = TypeVar("T")
 
 

@@ -16,7 +16,6 @@ from scraper.events.pipeline import fetch_events
 from scraper.events.prompt import EVENT_PROMPT_OVERVIEW
 from scraper.events.sources import EVENT_SOURCES
 
-
 TODAY = datetime.date.today()
 # Datetime which is earlier than any legitimate ones we expect to encounter
 EPOCH_START = datetime.date.fromtimestamp(0)

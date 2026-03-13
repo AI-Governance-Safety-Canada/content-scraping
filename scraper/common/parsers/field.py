@@ -1,6 +1,5 @@
 from typing import Any, Dict, Optional, Type, TypeVar
 
-
 T = TypeVar("T")
 
 

@@ -11,7 +11,6 @@ from scraper.common.types.date_and_time import DateAndTime
 from scraper.common.writers.csv import write_to_csv
 from scraper.common.writers.jsonl import write_to_jsonl
 
-
 UTC = timezone.utc
 
 

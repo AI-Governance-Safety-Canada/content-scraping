@@ -2,7 +2,6 @@ import unittest
 
 from .field import fetch_field_with_type
 
-
 EXAMPLE = {
     "name": "Alice",
     "age": 30,
