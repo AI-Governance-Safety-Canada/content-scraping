@@ -70,7 +70,7 @@ def fetch_event_details(api: Api[EventList], event: Event) -> Event:
         scrape_datetime=event.scrape_datetime,
     )
     for detail in additional_details:
-        logger.debug("Event details: %r", event)
+        logger.debug("Event details: %r", detail)
         # For most fields, prefer info from the event's own page
         detail.merge(event)
         # However, prefer the URL we scraped from the upstream page, which is often the
