@@ -124,4 +124,6 @@ class DateAndTime(NullStringValidator):
         for field_name, value in other:
             if getattr(self, field_name) is None:
                 setattr(self, field_name, value)
+        self.validate_date()
+        self.validate_time()
         return self
