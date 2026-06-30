@@ -21,4 +21,7 @@ EVENT_SOURCES = (
     "https://srinstitute.utoronto.ca/events",
     "https://uottawa.ca/research-innovation/centre-law-technology-society/events",
     "https://vectorinstitute.ai/events/",
+    "https://trajectorylabs.org/events",
+    "https://meetup.com/montreal-ai-governance-ethics-safety/",
+    "https://meetup.com/coalition-pour-lia-responsable-quebec/",
 )
